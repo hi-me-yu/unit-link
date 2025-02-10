@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="test.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1>業務報告アプリ</h1>
+    <a href="{{ url_for('form') }}"><!--  url_for()はその関数に関連するapp.route()の引数のエンドポイントを作り出す。エンドポイントが生成されてapp.route関数により
+        ブラウザが表示されたら直後の関数も実行される -->
+         <button>業務報告する</button>
+    </a>
+    <a href="{{ url_for('spread_link') }}">
+         <button>業務報告を見る</button>
+    </a>
+
+
+    <script src="{{ url_for('static', filename='report.js') }}"></script>  
+</body>
+</html>

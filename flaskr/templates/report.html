@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="test.css">
+    <title>Document</title>
+</head>
+<body>
+<h1>業務報告アプリ</h1>
+
+<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいく -->
+    
+     <label for = "text">名前：</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
+    <input  type="text" id="name" name="name"><br> <!-- nameは入力されたテキストに名前をつける -->
+
+    <label for="report">業務報告：</label>
+    <textarea id="report" name="report" rows="5" cols="40"></textarea><br>
+
+ 
+    <button type="submit">送信</button>
+</form> 
+<a href="{{ url_for('spread_link') }}">
+    <button>業務報告を見る</button>
+</a>
+<a href="{{ url_for('index') }}">
+    <button>トップに戻る</button>
+</a>
+
+<script src="test.js"></script>    
+</body>
+</html>
