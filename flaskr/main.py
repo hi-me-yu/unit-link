@@ -1,16 +1,19 @@
 from flaskr import app
-from flask import render_template, request, redirect, url_for #HTMLのデータを読み込んでPythonのデータに埋め込んで表示させる ※jinja2を使ってる
+from flask import render_template, request, redirect, url_for, json #HTMLのデータを読み込んでPythonのデータに埋め込んで表示させる ※jinja2を使ってる
 import gspread  #gspreadモジュールをインポート
+import os
+from google.oauth2.service_account import Credentials
 
-gc = gspread.service_account(  #service_account関数を呼び出しspread-sheet-test.jsonを使ってグーグルAPIの認証を行う
-    filename=  "spread-sheet-test.json" #関数を実行して戻り値としてClientクラスが作成されそれをgcに代入
-)
+service_account_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
+credentials = Credentials.from_service_account_info(service_account_info)
+
+gc = gspread.authorize(credentials)
+
+spreadsheet_id = os.environ["16PQbDNY5ofXSV5uQvgkcjKMZ0TvXdS2K"]
+
 spreadsheet_url = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
 
-sh = gc.open( #openメソッドで既存のスプレッドシートを呼び出す
-    "test_1",
-    folder_id = "16PQbDNY5ofXSV5uQvgkcjKMZ0TvXdS2K"
-)
+sh = gc.open_by_key(spreadsheet_id)
 ws = sh.get_worksheet(0)
 ws.update_acell('A1', 'Hello World')
 
