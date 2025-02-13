@@ -6,7 +6,7 @@ from google.oauth2.service_account import Credentials
 
 service_account_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
 credentials = Credentials.from_service_account_info(service_account_info)
-
+        
 gc = gspread.authorize(credentials)
 
 spreadsheet_id = os.environ["16PQbDNY5ofXSV5uQvgkcjKMZ0TvXdS2K"]
@@ -29,16 +29,6 @@ def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実�
         "report.html"
     )
     
-# @app.route("/spread")
-# def spread():
-#         # スプレッドシートに追加
-#         ws.update_acell("A2","オッケー")
-        
-#         return render_template(
-#             "title.html"
-#             )
-
-
 @app.route("/spread", methods=["GET", "POST"]) 
 #POST:入力データを送る、GET:ページを開く POSTは送る側・貰う側両方設定必要。（GETは貰う側だけでOK)
 def spread():
