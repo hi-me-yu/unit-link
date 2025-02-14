@@ -4,8 +4,9 @@ import gspread  #gspreadモジュールをインポート
 import os
 from google.oauth2.service_account import Credentials
 
-service_account_info = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
-credentials = Credentials.from_service_account_info(service_account_info)
+
+json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+credentials = Credentials.from_service_account_file(json_file_path)
         
 gc = gspread.authorize(credentials)
 
