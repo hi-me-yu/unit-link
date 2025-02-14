@@ -15,7 +15,7 @@ credentials = Credentials.from_service_account_file(
         
 gc = gspread.authorize(credentials)
 
-spreadsheet_id = "16PQbDNY5ofXSV5uQvgkcjKMZ0TvXdS2K"
+spreadsheet_id = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
 
 spreadsheet_url = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
 
