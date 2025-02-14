@@ -6,7 +6,12 @@ from google.oauth2.service_account import Credentials
 
 
 json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-credentials = Credentials.from_service_account_file(json_file_path)
+
+scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+
+credentials = Credentials.from_service_account_file(
+    json_file_path, scopes=scopes
+)
         
 gc = gspread.authorize(credentials)
 
