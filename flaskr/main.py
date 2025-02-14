@@ -46,3 +46,4 @@ def spread():
 @app.route("/spread_link")
 def spread_link():
     return redirect(spreadsheet_url)
+
