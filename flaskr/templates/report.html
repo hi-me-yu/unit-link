@@ -4,25 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="test.css">
-    <title>Document</title>
+    <title>業務報告</title>
 </head>
 <body>
 <h1>業務報告アプリ</h1>
 
-<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいく -->
-    
-     <label for = "text">名前：</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
-    <input  type="text" id="name" name="name"><br> <!-- nameは入力されたテキストに名前をつける -->
 
-    <label for="report">業務報告：</label>
-    <textarea id="report" name="report" rows="5" cols="40"></textarea><br>
+<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいく -->
+     
+    
+    
+     <label for = "revenue">売上予測</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
+     <input type="text" id="revenue" name="revenue" placeholder="半角数字のみ" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>万円<br> <!-- nameは入力されたテキストに名前をつける -->
+     
+     <label for = "budget">予算差</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
+     <input type="text" id="budget" name="budget" placeholder="マイナスの場合【-】" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>万円<br> <!-- nameは入力されたテキストに名前をつける -->
+    
+
+    <label for="mile">マイストーン振り返りOK？
+        （毎月3~5日,19~21日）</label>
+       <select id="mile" name="mile">
+          <option value="option1"> </option>
+          <option value="option2">〇</option>
+    </select>
+    <br>
+
+    <label for="report">本日の申し送り</label>
+    <textarea id="report"  name="report" rows="3" cols="40"></textarea><br>
 
  
     <button type="submit">送信</button>
 </form> 
-<a href="{{ url_for('spread_link') }}">
-    <button>業務報告を見る</button>
-</a>
+
 <a href="{{ url_for('index') }}">
     <button>トップに戻る</button>
 </a>

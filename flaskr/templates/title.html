@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="test.css">
-    <title>Document</title>
+    <title>業務報告</title>
 </head>
 <body>
     <h1>業務報告アプリ</h1>
@@ -12,12 +12,19 @@
         ブラウザが表示されたら直後の関数も実行される -->
          <button>業務報告する</button>
     </a>
-    <a href="{{ url_for('spread_link') }}">
+    <a href="{{ url_for('spread_link') }}" target="_blank">
          <button>業務報告を見る</button>
     </a>
-    <h1>なぜないにゃ</h1>
 
+    <h3>本日の日付は{{today}}です</h3>
+    {% if message %}
+    <h1 class="top_mile">{{message}}</h1>
+    {% else %}
+    <h1></h1>
+    {% endif %}
 
+    
+   
     <script src="{{ url_for('static', filename='report.js') }}"></script>  
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>業務報告</title>
 </head>
 <body>
     <h1>お疲れ様でした</h1>
@@ -11,8 +11,10 @@
     <a href="{{ url_for('index') }}">
        <button>トップに戻る</button>
     </a>
+    <a href="{{ url_for('spread_link') }}" target="_blank"><!-- target = "blank"はaタグの属性でリンクを新しいブラウザで開く -->
+        <button>業務報告を見る</button>
+    </a>
 
-    <h1>こんにちは！！！！</h1>
-    <h2>なぜないんや</h2>
+   
 </body>
 </html>
