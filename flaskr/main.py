@@ -6,7 +6,10 @@ from google.oauth2.service_account import Credentials
 from datetime import date, datetime
 
 branch_map = {
-    "127.0.0.1": "c事業所"
+    "127.0.0.1": "c事業所",
+    "192.168.3.2" :"アイフォン",
+    "192.168.3.1" :"アイフォン2",
+    "192.168.3.11":"自分"
     # 必要に応じて追加
 }
 
@@ -104,6 +107,11 @@ def spread():
             ws.format("B3", {
                 "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 2}, "bold": True, "fontSize": 12}
             })
+        else:
+            ws.format("B3", {
+                "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 0}, "bold": True, "fontSize": 12}
+            })
+        
             
         #マイストーンチェックをプルダウン化にする
         if mile_data == "option2":
