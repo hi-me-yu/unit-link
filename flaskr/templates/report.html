@@ -10,10 +10,8 @@
 <h1>業務報告アプリ</h1>
 
 
-<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいく -->
+<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいきルートの関数（今回はspread関数）を実行 -->
      
-    
-    
      <label for = "revenue">売上予測</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
      <input type="text" id="revenue" name="revenue" placeholder="半角数字のみ" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>万円<br> <!-- nameは入力されたテキストに名前をつける -->
      
@@ -36,7 +34,7 @@
     <button type="submit">送信</button>
 </form> 
 
-<a href="{{ url_for('index') }}">
+<a href="{{ url_for('title') }}">
     <button>トップに戻る</button>
 </a>
 

@@ -1,3 +1,4 @@
+# from flask import Flask リモートホスト用※from flaskr import appは消す
 from flaskr import app
 from flask import render_template, request, redirect, url_for, json #HTMLのデータを読み込んでPythonのデータに埋め込んで表示させる ※jinja2を使ってる
 import gspread  #gspreadモジュールをインポート
@@ -5,14 +6,17 @@ import os
 from google.oauth2.service_account import Credentials
 from datetime import date, datetime
 
+# app = Flask(__name__)リモートホスト用
+
 branch_map = {
     "127.0.0.1": "c事業所",
     "192.168.3.2" :"アイフォン",
-    "192.168.3.1" :"アイフォン2",
-    "192.168.3.11":"自分"
+    "192.168.3.5" :"アイフォン2",
+    "192.168.3.11":"自分",
     # 必要に応じて追加
 }
 
+# json_file_path = "spread-sheet-test.json" #開発モード用
 json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 
 scopes = ["https://www.googleapis.com/auth/spreadsheets"] #スコープ：どの範囲でまでその権限・影響を及ばせるか 今回のパターンで行くとスプレッドシートの読み書きが行える
@@ -37,29 +41,9 @@ week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土
 today_str = today.isoformat()#isoformatメソッドで今日の日付を文字列にする
 today_week = week[today.weekday()] #weekdayメソッドは取得した日付の曜日を数字として表す
 today_full = f"{today_str} {today_week}"
-
-@app.route("/") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-def index():#トップ画面が表示される時に使われる関数
-    special_days = [3, 4, 5, 19, 20, 21, 22]
-    message = ""
-    
-    if today.day in special_days:
-        message = "マイルストーン振り返りの期間です"
-        
-    today_with_week = f"{today_str} {today_week}"
-    return render_template(
-       "title.html",message = message,today = today_with_week
-   )
- 
-@app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
-def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実行しろってこと→つまりhttp://127.0.0.1:5000/formのブラウザにreport.htmlを表示させるってこと
-    return render_template(
-        "report.html"
-    )
     
 @app.route("/spread", methods=["GET", "POST"]) 
 #POST:入力データを送る、GET:ページを開く POSTは送る側・貰う側両方設定必要。（GETは貰う側だけでOK)
-
 def spread():
     if request.method == "POST":
         # フォームのデータを取得
@@ -100,6 +84,11 @@ def spread():
             ws.format("E3", {
                 "textFormat": {"foregroundColor": {"red": 1, "green": 0, "blue": 0}, "bold": True, "fontSize": 15}
             })
+        else:
+            ws.format("E3", {
+                "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 0}, "bold": True, "fontSize": 15}
+            })
+        
 
         # マイルストーン振り返り期間中はB列の日付に色をつける
         today_day = today.day #today.dayのdayはプロパティ（値だけを取得したい）ので（）はいらない
@@ -127,4 +116,9 @@ def spread():
 @app.route("/spread_link")
 def spread_link():
     return redirect(spreadsheet_url)
+
+# if __name__ == "__main__" :
+#     app.run(host="0.0.0.0", port=8090, debug=True)　リモートホスト用
+
+
 

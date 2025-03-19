@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<h1>管理者画面</h1>
+    <h1>{{login}}</h1>
+    <form method="post" action="{{ url_for('register') }}">
+    <table border="1">
+        <tr>
+            <th>ユーザー名</th>
+            <th>パスワード</th>
+            <th>事業所名</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="username"></td>
+            <td><input type="text" name="pw"></td>
+            <td><input type="text" name="office_name"></td>
+        </tr>
+    </table>
+    <br>
+    <!-- 全部入力出来てないのに新規登録ボタンを押してしまった時のアラート -->
+    <!-- get_flashed_messages：flashで保存されたデータの取得 (with_categories = false) :カテゴリを設定した時にカテゴリも同時に取得 -->
+    <!-- withはそのブロックの中で使える変数を定義（jinjaで変数を定義するときに） -->
+    {% with messages = get_flashed_messages(with_categories = false) %}
+       {% if messages %}
+       <!-- 今回は["登録が完了しました", "すべての項目を入力してください"]となる -->
+          {% for message in messages %}
+            <div >{{ message }}</div>
+         {% endfor %}
+       {% endif %}
+    {% endwith %}
+
+    <input type="submit" value="新規登録">
+    </form>
+    
+    <form method="post" action="{{ url_for('update') }}">
+        <table border="1">
+            <tr>
+                <th>ID(主キー)</th>
+                <th>ユーザー名</th>
+                <th>事業所名</th>
+                
+            </tr>
+            {% for log in posts %}
+            <tr>
+                <td>
+                    <!-- inputのvalueは表示されるしデータとしても送られる。buttonのvalueは表示はされないけどデータとして送られる。
+                    inputもbuttonもそのデータの名前としてnameがある（※nameはデータの値ではない） -->
+                    <!-- hidden:ユーザーには表示されないけどデータとしては送信される -->
+                    <!-- name:データを送る時の名前（データの情報そのものではない）value:送る情報※inputのvalueとbuttonのvalueは異なる。input→表示＆データ　button→表示なしのデータ -->
+                <input type="text" name="id_{{log.id}}" value="{{ log.id }}" readonly>
+                </td>
+                <td> <input type="text" name="username_{{ log.id }}" value="{{ log.username }}"></td>
+                <td><input type="text" name="office_name_{{ log.id }}" value="{{ log.office_name }}"></td>
+                <td><button type="submit" name="update" value="{{ log.id }}">更新</button></td>
+                <td><button type="submit" name="delete" value="{{ log.id }}">削除</button></td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+    
+
+    <a href="{{ url_for('logout') }}">
+        <button>ログアウト</button>
+    </a>
+
+    
+</body>
+</html>

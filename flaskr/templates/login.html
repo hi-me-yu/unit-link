@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <form method="post" action="{{ url_for('login') }}">
+        <table border="1">
+            <tr>
+                <th>ユーザー名</th>
+                <th>パスワード</th>
+                
+            </tr>
+            <tr>
+                <td><input type="text" name="username"></td>
+                <td><input type="text" name="pw"></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="ログイン">
+        </form>
+       
+        <p style="color: red;">{{ error }}</p>
+        
+</body>
+</html>
