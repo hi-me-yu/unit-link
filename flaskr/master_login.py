@@ -7,9 +7,10 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-app.config["SECRET_KEY"] = os.urandom(24)
-app.secret_key = 'your_secret_key' #sessionモジュールを使うための秘密鍵。これ設定しないとsessionモジュール使えない
-# app.permanent_session_lifetime = timedelta(days=7)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")#sessionモジュールを使うための秘密鍵。これ設定しないとsessionモジュール使えない
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")#renderで作成したpostgreSQLをflaskで接続するために必要
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # 警告を消すため
+
 
 # login_managerインスタンス化
 login_manager = LoginManager()
@@ -32,9 +33,9 @@ def load_user(user_id):
     return Post.query.get(user_id)
 
 # postgreSQLでテーブル作成コード（ターミナルでpython -m flaskr.master_login)
-# with app.app_context():
-#     db.create_all()  # テーブルを作成
-#     print("テーブル作成完了！")
+with app.app_context():
+    db.create_all()  # テーブルを作成
+    print("テーブル作成完了！")
 
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]

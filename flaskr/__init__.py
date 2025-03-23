@@ -12,15 +12,15 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__) #Flaskクラスのインスタンスを作成 __name__はどのPythonファイルでアプリが実行されてるのか示す
 
 # PostgreSQLの接続情報を設定（そのまま記載したらOK）
-DB_INFO = {
-    "user": "postgres",
-    "password" : "12731273",
-    "host" : "localhost",
-    "name" : "postgres"
-}
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://{user}:{password}@{host}/{name}".format(**DB_INFO)
-#Flaskに「これが使うべきデータベースですよ」と教え記憶させてる　= SQLALCHEMY_DATABASE_URIは変数（右辺）
-app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+# DB_INFO = {
+#     "user": "postgres",
+#     "password" : "12731273",
+#     "host" : "localhost",
+#     "name" : "postgres"
+# }
+# SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://{user}:{password}@{host}/{name}".format(**DB_INFO)
+# #Flaskに「これが使うべきデータベースですよ」と教え記憶させてる　= SQLALCHEMY_DATABASE_URIは変数（右辺）
+# app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 
 
 # dbのインスタンス化
