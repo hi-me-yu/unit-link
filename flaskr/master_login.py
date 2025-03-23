@@ -6,7 +6,8 @@ import psycopg2,os
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+#ローカル用　セッションキーの設定
+# app.config["SECRET_KEY"] = os.urandom(24)
 
 # login_managerインスタンス化
 login_manager = LoginManager()
@@ -29,9 +30,9 @@ def load_user(user_id):
     return Post.query.get(user_id)
 
 # postgreSQLでテーブル作成コード（ターミナルでpython -m flaskr.master_login)
-with app.app_context():
-    db.create_all()  # テーブルを作成
-    print("テーブル作成完了！")
+# with app.app_context():
+#     db.create_all()  # テーブルを作成
+#     print("テーブル作成完了！")
 
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]
