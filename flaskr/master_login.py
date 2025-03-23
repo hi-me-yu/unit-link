@@ -6,11 +6,7 @@ import psycopg2,os
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")#sessionモジュールを使うための秘密鍵。これ設定しないとsessionモジュール使えない
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")#renderで作成したpostgreSQLをflaskで接続するために必要
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # 警告を消すため
-
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 
 # login_managerインスタンス化
 login_manager = LoginManager()
