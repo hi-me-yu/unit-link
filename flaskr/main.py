@@ -5,16 +5,11 @@ import gspread  #gspreadモジュールをインポート
 import os
 from google.oauth2.service_account import Credentials
 from datetime import date, datetime
+from flaskr.master_login import get_office_name
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 
 # app = Flask(__name__)リモートホスト用
 
-branch_map = {
-    "127.0.0.1": "c事業所",
-    "192.168.3.2" :"アイフォン",
-    "192.168.3.5" :"アイフォン2",
-    "192.168.3.11":"自分",
-    # 必要に応じて追加
-}
 
 #開発モード用
 # json_file_path = "spread-sheet-test.json" 
@@ -46,6 +41,7 @@ today_full = f"{today_str} {today_week}"
     
 @app.route("/spread", methods=["GET", "POST"]) 
 #POST:入力データを送る、GET:ページを開く POSTは送る側・貰う側両方設定必要。（GETは貰う側だけでOK)
+@login_required
 def spread():
     if request.method == "POST":
         # フォームのデータを取得
@@ -53,25 +49,29 @@ def spread():
         revenue_data = request.form["revenue"]
         budget_data = request.form["budget"]
         mile_data = request.form["mile"]  
+        
+        #事業所名をDBから取得
+        office_name = get_office_name(current_user.id)
+        
+        #曜日ごとの色の設定
+        weekday_colors =  {
+            0: {"red": 0.9, "green": 0.95, "blue": 1.0},  # 月曜: 超薄い青
+            1: {"red": 1.0, "green": 0.95, "blue": 0.95},  # 火曜: 超薄い赤
+            2: {"red": 1.0, "green": 1.0, "blue": 0.85},  # 水曜: 超薄い黄色
+            3: {"red": 0.95, "green": 1.0, "blue": 0.95},  # 木曜: 超薄い緑
+            4: {"red": 1.0, "green": 0.95, "blue": 0.85},  # 金曜: 超薄いオレンジ
+            5: {"red": 0.97, "green": 0.92, "blue": 1.0},  # 土曜: 超薄い紫
+            6: {"red": 1.0, "green": 1.0, "blue": 1.0}   # 日曜: 超薄い水色（白に近い）
+        }
 
-        # IPアドレスから事業所名を取得
-         #request.headersでHTTPリクエストのヘッダーの情報を取得、get('X-Forwarded-For', None)でヘッダーの中からX-Forwarded-Forを取得
-        forwarded_for = request.headers.get('X-Forwarded-For', None) 
-        #リバースプロキシがある場合は上、ない場合はremote_addrを使用してIPアドレスを取得
-        if forwarded_for:
-             #split(',')[0]は文字列に対して引数に指定した所で区切るメソッド（何個もあるIPアドレスの１番目を取得）、.strip()は前後の余分な空白や改行を削除するメソッド  
-            user_ip = forwarded_for.split(',')[0].strip()  
-        else:
-            user_ip = request.remote_addr  
-         # オブジェクト.get(一致を求める値、一致しなかった際に返す値) →オブジェクトに対して第一引数の値が一致するか確認し一致してたらその値を返す、一致してなければ第二引数を返す   
-        branch_name = branch_map.get(user_ip, "事業所なし")
-
+        
+        
         # 新しい業務報告データ（3行目に挿入する）
         #各列にフォームから取得して下記リストのデータを入れる
         new_data = [
             "",
             today_full,   # B列: 日付
-            branch_name,  # C列: 事業所名
+            "VP" + office_name,  # C列: 事業所名
             revenue_data + "万円",  # D列: 売上予測
             budget_data + "万円",   # E列: 予算差
             mile_data,    # F列: マイルストーンチェック
@@ -90,7 +90,10 @@ def spread():
             ws.format("E3", {
                 "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 0}, "bold": True, "fontSize": 15}
             })
-        
+       
+        #曜日ごとにセルの色が変わる
+        ws.format("B3:G3", {
+            "backgroundColor": weekday_colors[today.weekday()]})
 
         # マイルストーン振り返り期間中はB列の日付に色をつける
         today_day = today.day #today.dayのdayはプロパティ（値だけを取得したい）ので（）はいらない
@@ -100,7 +103,7 @@ def spread():
             })
         else:
             ws.format("B3", {
-                "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 0}, "bold": True, "fontSize": 12}
+                "textFormat": {"foregroundColor": {"red": 0, "green": 0, "blue": 0}, "bold": False, "fontSize": 10}
             })
         
             
@@ -111,7 +114,7 @@ def spread():
             ws.update_acell(f"F3","")
         
          # 送信後スプレッドシートへ飛ぶ HTMLファイルに飛ばしたいときはrender_template、URLに飛ばしたかったらredirect
-        return render_template("exit.html")
+        return redirect(spreadsheet_url)
 
     return render_template("report.html") #GETに対応。spread関数を実行するときにreport.htmlを開く
     

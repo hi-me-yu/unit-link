@@ -1,0 +1,180 @@
+
+/*◎ヘッダー */
+header { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    color: white;
+    border-bottom: 5px inset #999966;  /* ヘッダー下に金色の線 */
+}
+header nav a {
+    color: #999966;  /* 金色 */
+    margin-left: 25px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+header nav a:hover {
+    text-decoration: underline;
+}
+
+header .logo h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+
+/* ◎メイン */
+/* 日付のスタイル */
+.main_today{
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: end;
+}
+
+/* メインタイトル */
+/* 
+お知らせボード
+ */
+.main_office_name{
+    font-size: 35px;
+    text-align: center;
+    letter-spacing: 5px;/* 文字と文字の間隔 */
+    font-family: "Mochiy Pop One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* メッセージのスタイル */
+.main_milestone{
+    font-size: 40px;
+    text-align: center;
+    color: #d9534f; /* 赤系で目立たせる */
+    display: inline-block;
+    font-family: "Mochiy Pop One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+
+/* ◎フッター */
+/* 
+フッター全体
+ */
+ .unit-footer {
+    position: absolute;
+    bottom:0;/* フッターの位置を下部の一番下に設定 */
+    width: 100%;
+    background: #f9f9f9; /* 穏やかな背景色 */
+    color: #333; /* 落ち着いた文字色 */
+    text-align: center;
+    padding: 15px 0;
+    justify-content: center;/* 要素を縦方向中央に */
+    align-items: center;/* 要素を横方向中央に */
+    border-top: 1px solid #ddd;/* フッター上部に線をつける */
+}
+
+/* 
+文字全体
+ */
+ .footer-inner {
+    max-width: 1000px; /* 幅を広げて調整 */
+    margin: 0 auto; /* 左右の余白を均等にする */
+    display: flex;/* 下記flex-directionを効かすため */
+    flex-direction: column;/* 子要素縦並びにする */
+}
+/* 
+上部各行全体 
+*/
+.unit-row {
+    width: 100%;/* 文字の横幅 */
+}
+
+/* 
+上部小項目文字
+ */
+.unit-title {
+    font-size: 19px; /* 少し大きく */
+    font-weight: normal;
+    color: #444; /* 目立ちすぎないダークグレー */
+    line-height: 1.2; /* 行間を広げて2行に収まりやすく */
+    font-family: "Yu Mincho", 游明朝, serif;
+    font-weight: bolder;
+}
+
+/* 
+上部大項目文字
+ */
+.unit-content {
+    font-size: 22px; /* 少し大きく */
+    color: #ff69a3;/* 強調色として温かみのある黄色 */
+    flex: 1 1 45%;
+    white-space: nowrap; /* 折り返しを無効にする */
+    font-family: "Shippori Mincho B1", serif;
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1.2;/* 行間の間隔を調整 */
+    
+}
+
+/* 
+下部文字全体
+ */
+.goal-row {
+    text-align: center; /* タイトルを中央揃え */
+}
+
+/* 
+下部小項目
+ */
+.goal-title {
+    font-size: 19px; /* 少し大きく */
+    font-weight: normal;
+    color: #444; /* 目立ちすぎないダークグレー */
+    line-height: 1.2; /* 行間を広げて2行に収まりやすく */
+    font-family: "Yu Mincho", 游明朝, serif;
+    font-weight: bolder;
+    line-height: 1.2;/* 行間の間隔を調整 */
+
+}
+/* 
+下部大項目全体
+ */
+.goal-content-wrapper {
+    width: 100%;
+    display: flex; /* 横並びにする */
+    justify-content: center;  /* ボックスを中央に配置 */
+    gap: 100px; /* ボックス同士の間隔 */
+    white-space: nowrap; /* 折り返しを無効にする */
+
+}
+/* 
+下部大項目
+ */
+.goal-content {
+    width: 400px; /* ボックスの幅を指定 */
+    margin-right: 100px;/* 各項目の間隔開ける */
+    text-align: left; /* テキストを中央寄せ */
+    font-family: "Shippori Mincho B1", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 22px;
+    line-height: 1.2;/* 行間の間隔を調整 */
+    color: #5d99ff;
+}
+
+/* 仕切り線のデザイン */
+.footer-line {
+    width: 60%;
+    margin: 15px auto;
+    border: 0;
+    height: 1px;
+    background: #bbb;
+}
+
+

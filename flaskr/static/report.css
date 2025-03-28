@@ -1,0 +1,132 @@
+/*◎ヘッダー */
+header { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    color: white;
+    border-bottom: 5px inset #999966;  /* ヘッダー下に金色の線 */
+}
+header nav a {
+    color: #999966;  /* 金色 */
+    margin-left: 25px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+header nav a:hover {
+    text-decoration: underline;
+}
+
+header .logo h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.title_office{
+    font-size: 35px;
+    text-align: center;
+    letter-spacing: 5px;/* 文字と文字の間隔 */
+    
+}
+
+/* フォーム全体 */
+.modern-form {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ラベル */
+.modern-form label {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+/* Googleフォーム風の入力ボックス */
+.underline-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #ddd;
+    transition: border-color 0.3s ease;
+}
+
+.underline-input input {
+    flex: 1;
+    border: none;
+    font-size: 16px;
+    padding: 8px 0;
+    outline: none;
+    background: transparent;
+}
+
+/* 入力中の強調 */
+.underline-input input:focus {
+    border-bottom: 2px solid #ff8c00;
+}
+
+/* 単位（万円） */
+.unit {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    margin-left: 10px;
+}
+
+/* セレクトボックス */
+.modern-form select {
+    appearance: none;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    background: transparent;
+    font-size: 16px;
+}
+
+/* テキストエリア */
+.modern-form textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    padding: 12px;
+    font-size: 16px;
+    background: transparent;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 25px; /* ← 各項目の間隔を大きく */
+    border-bottom: 2px solid #ddd; /* Googleフォーム風の下線 */
+}
+
+/* 送信ボタン */
+.modern-form button {
+    width: 100%;
+    background: linear-gradient(45deg, #ff8c00, #ff6000);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.3s ease;
+}
+.styled-form button {
+    margin-top: 30px;
+}
+
+/* ホバー時 */
+.modern-form button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}

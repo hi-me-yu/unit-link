@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Rampart+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <title>Document</title>
 </head>
 <body>
-    
+    <h1>第4ユニット 業務報告</h1>
     <form method="post" action="{{ url_for('login') }}">
-        <table border="1">
-            <tr>
-                <th>ユーザー名</th>
-                <th>パスワード</th>
-                
-            </tr>
-            <tr>
-                <td><input type="text" name="username"></td>
-                <td><input type="text" name="pw"></td>
-            </tr>
-        </table>
+        <div class="input-container">
+        <input type="text" id="revenue" name="username" placeholder="ユーザー名" >
+        <input type="text" id="revenue" name="pw" placeholder="パスワード" >
+        
+       
         <br>
-        <input type="submit" value="ログイン">
+        <input class="input-container_button" type="submit" value="ログイン">
+    </div>
         </form>
        
         <p style="color: red;">{{ error }}</p>

@@ -3,11 +3,15 @@ from flask import render_template, request, redirect, url_for, json, session, ma
 from datetime import date, timedelta
 from flask_sqlalchemy import SQLAlchemy 
 import psycopg2,os
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-#ローカル用　セッションキーの設定
+# ローカル用　セッションキーの設定
 # app.config["SECRET_KEY"] = os.urandom(24)
+
+#Flask-Loginの「Remember Me（ログイン状態を維持）」機能を制御
+#Flask-Login が「Remember Me」用のクッキーを作成し、セッションが切れても自動ログインできるようになる。通常はブラウザ綴じるとセッション切れる
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=7)
 
 # login_managerインスタンス化
 login_manager = LoginManager()
@@ -42,9 +46,10 @@ today_full = f"{today_str} {today_week}"
 
 #一番最初のトップ画面　ログイン画面
 @app.route("/") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-def index():#トップ画面が表示される時に使われる関数  
-    
-    a = "ログイン画面"
+def index():#トップ画面が表示される時に使われる関数
+    a = "ログイン画面"  
+    if current_user.is_authenticated:
+        return redirect(url_for('title'))  # ログイン済みならトップページへ
     return render_template(
        "login.html", login = a
    )
@@ -64,9 +69,9 @@ def login():
         if user and check_password_hash(user.pw, pw):
             #login_userはflask_loginモジュールの関数：引数の値にユーザー情報（主キーが入った）を代入。sessionに主キーを保存する
             #主キーの情報は再読み込み時に@login_manager.user_loaderが処理する
-            login_user(user)
+            login_user(user, remember=True)
             #管理者はまず管理者画面に飛ぶ
-            if user.username == "0":
+            if user.username == "master":
                 # login_user(user)
                 return redirect(url_for("master"))
              #一致していればログインさせてタイトル画面に    
@@ -86,7 +91,7 @@ def logout():
       
 #管理者画面　サインアップとDBを表示させる 
 @app.route("/master") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required 
+@login_required  #「ログインしているか？」をチェックするデコレーター
 def master():#トップ画面が表示される時に使われる関数  
     #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
     # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
@@ -148,12 +153,20 @@ def update():
     return redirect(url_for("master"))
 
 
-#業務報告をする、見る画面   
+#ログインした事業所名を取得する関数
+#引数にログインした事業所の主キーを入れて主キーに当てはまる行の情報を全て取得
+def get_office_name(user_id):
+    user = Post.query.get(user_id)
+    return user.office_name 
+
+#業務報告をする、見る画面
 @app.route("/title") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
 @login_required 
 def title():#トップ画面が表示される時に使われる関数
+    #ログインした事業所名を取得する関数を実施（current_user.idでログインした事業所のid情報を取得して引数に）
+    office_name = get_office_name(current_user.id)
    
-    special_days = [3, 4, 5, 19, 20, 21, 22]
+    special_days = [3, 4, 5, 19, 20, 21, 22, 28]
     message = ""
     
     if today.day in special_days:
@@ -162,7 +175,8 @@ def title():#トップ画面が表示される時に使われる関数
     today_with_week = f"{today_str} {today_week}"
     
     return render_template(
-       "title.html",message = message,today = today_with_week
+       "title.html",message = message,today = today_with_week,
+       office_name = office_name
        
    )
 
@@ -170,7 +184,9 @@ def title():#トップ画面が表示される時に使われる関数
 @app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
 @login_required 
 def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実行しろってこと→つまりhttp://127.0.0.1:5000/formのブラウザにreport.htmlを表示させるってこと
+    office_name = get_office_name(current_user.id)
+    
     return render_template(
-        "report.html"
+        "report.html",office_name = office_name
     )
     

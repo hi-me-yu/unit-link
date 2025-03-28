@@ -1,0 +1,74 @@
+body {
+    /* linear-gradient: 直線的なグラデーション（色の変化）を指定 135deg: グラデーションの角度。ここでは、135度（右下方向）に色が変化 */
+    background-color: #f5f5dc; /* ベージュ */
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column; /* body内の要素を立てに並べる */
+    align-items: center;  /* 中央寄せ */
+    justify-content: center; /* 中央寄せ */
+}
+
+h1 {
+    font-family: "Hachi Maru Pop", cursive;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 50px;/*  #（斜体ではない） */
+    color: #ffffff;  /* 白（背景色が明るいため、白で目立ちやすく元気な印象） */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 影で文字を引き立て */
+    background: linear-gradient(200deg, #ffeb3b, #ff9800); /* 明るいイエローからオレンジのグラデーション */
+    padding: 20px 40px;
+    border-radius: 60px; /* 丸みのあるデザイン */
+    box-shadow: 5px 5px 15px rgba(255, 150, 200, 0.5); /* ふわっとした影 */
+}
+.input-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding:30px 55px 30px 30px;
+    width: 300px;
+}
+/* テキスト入力欄の設定 */
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0; /* 上下10px 左右0pxのマージン */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    
+}
+/* ユーザーがテキスト欄をクリックしたときにテキスト欄が青く光る */
+input[type="text"]:focus {
+    border-color: #5e9ed6;
+    box-shadow: 0 0 10px rgba(94, 158, 214, 0.5);
+    outline: none; 
+    /* 0.3秒かけてクリックしたときにテキスト欄が変化　
+    ease-in-out は、遷移のタイミング関数　ease-in-out：両方の効果を組み合わせて、始まりと終わりがゆっくり、中間が早くなる */
+    transition: all 0.3s ease-in-out; 
+}
+.input-container_button {
+    width: 110%;
+    padding: 12px;
+    border: none; /* 線の色をつけない */
+    background-color: #5e9ed6;
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;/* カーソルをログインボタンの上に持ってきたら指マークになる */
+    transition: all 0.3s ease; /* ボタンに関する動きの遷移タイミン */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ふんわり影 */
+    font-weight: bold; /* 太字にして強調 */
+}
+
+.input-container_button:hover {
+    background-color: #4b8cbf;
+    transform: translateY(-4px); /* ホバー時に少し浮き上がる */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* ホバー時に影を強調 */
+}
+
+.input-container_button:active {
+    background-color: #3e7a99; /* 押したときの色を変更 */
+    transform: translateY(2px); /* 押したときにボタンを少し沈める */
+    box-shadow: none; /* 影を消す */
+}

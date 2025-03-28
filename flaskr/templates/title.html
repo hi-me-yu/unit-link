@@ -3,35 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="test.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='title.css') }}">
     <title>業務報告</title>
 </head>
 <body>
-    <h1>業務報告アプリ</h1>
-    <a href="{{ url_for('form') }}"><!--  url_for()はその関数に関連するapp.route()の引数のエンドポイントを作り出す。エンドポイントが生成されてapp.route関数により
-        ブラウザが表示されたら直後の関数も実行される -->
-         <button>業務報告する</button>
-    </a>
-    <a href="{{ url_for('spread_link') }}" target="_blank">
-         <button>業務報告を見る</button>
-    </a>
+    <!--◎ ヘッダー -->
+    <header>
+        <img src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
+        <nav>
+            <a href="{{ url_for('form') }}">業務報告をする</a>
+            <a href="{{ url_for('spread_link') }}">業務報告を見る</a>
+            <a href="https://chouseisan.com" target="_blank">調整さん</a>
+            <a href="#">タスク管理</a>
+            <a href="#">ユニットスプレッドシート</a>
+            <a href="{{ url_for('logout') }}">ログアウト </a>
+        </nav>
+    </header>
+    <div>
+   
+<!-- ◎メイン -->
+    <p class="main_today" > {{today}} </p>
+    <h1 class="main_office_name" >VP{{office_name}} お知らせボード</h1>
 
-    <h3>本日の日付は{{today}}です</h3>
     {% if message %}
-    <h1 class="top_mile">{{message}}</h1>
+    <h1 class="main_milestone">〇{{message}}（２日、１０日定期）</h1>
     {% else %}
-    <h1></h1>
     {% endif %}
-
    
 
-   
-    <a href="{{ url_for('logout') }}">
-        <button>ログアウト</button>
-    </a>
-
-    
-   
+<!-- ◎フッター -->
+    <footer class="unit-footer">
+        <div class="footer-inner">
+            <div class="unit-row">
+                <div class="unit-title">目指すユニット</div>
+                <div class="unit-content">事業所同士が協力し、自走出来るユニット</div>
+            </div>
+            <hr class="footer-line">
+            <div class="goal-row">
+                <div class="goal-title">2025年度ユニットGOAL</div>
+                <div class="goal-content-wrapper">
+                    <div class="goal-content">【売上】 <br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
+                    <div class="goal-content">【人材育成】<br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
+                    <div class="goal-content">【Ｄ横とのつながり】<br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
+                </div>
+            </div>
+            </div>
+    </footer>
     <script src="{{ url_for('static', filename='report.js') }}"></script>  
 </body>
 </html>

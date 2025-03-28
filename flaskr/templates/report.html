@@ -3,40 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
     <title>業務報告</title>
 </head>
 <body>
-<h1>業務報告アプリ</h1>
+    <header>
+        <img src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
+        <nav>
+            <a href="{{ url_for('spread_link') }}">業務報告を見る</a>
+            <a href="https://chouseisan.com" target="_blank">調整さん</a>
+            <a href="#">タスク管理</a>
+            <a href="#">ユニットスプレッドシート</a>
+            <a href="{{ url_for('title') }}">トップに戻る</a>
+            <a href="{{ url_for('logout') }}">ログアウト </a>
+        </nav>
+    </header>
+    <div>
 
 
-<form action="{{ url_for('spread') }}"method="POST"> <!-- ボタンクリックするとspreadのURLに飛んでいきルートの関数（今回はspread関数）を実行 -->
-     
-     <label for = "revenue">売上予測</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
-     <input type="text" id="revenue" name="revenue" placeholder="半角数字のみ" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>万円<br> <!-- nameは入力されたテキストに名前をつける -->
-     
-     <label for = "budget">予算差</label> <!-- textなどに名前をつけて、for=でtextなどのidと紐づけることでラベルをクリックすると紐づけたtext入力欄に飛んでいく -->
-     <input type="text" id="budget" name="budget" placeholder="マイナスの場合【-】" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>万円<br> <!-- nameは入力されたテキストに名前をつける -->
-    
+<h1 class="title_office">VP{{office_name}} 業務報告</h1>
 
-    <label for="mile">マイストーン振り返りOK？
-        （毎月3~5日,19~21日）</label>
-       <select id="mile" name="mile">
-          <option value="option1"> </option>
-          <option value="option2">〇</option>
-    </select>
-    <br>
+<form action="{{ url_for('spread') }}" method="POST"  target="_blank" class="modern-form">
 
-    <label for="report">本日の申し送り</label>
-    <textarea id="report"  name="report" rows="3" cols="40"></textarea><br>
+    <div class="input-group">
+        <label for="revenue">売上予測</label>
+        <div class="underline-input">
+            <input type="text" id="revenue" name="revenue" placeholder="半角数字のみ" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>
+            <span class="unit">万円</span>
+        </div>
+    </div>
 
- 
+    <div class="input-group">
+        <label for="budget">予算差</label>
+        <div class="underline-input">
+            <input type="text" id="budget" name="budget" placeholder="マイナスの場合【-】" pattern="^-?[0-9]+$" title="半角数字とハイフンのみ" required>
+            <span class="unit">万円</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="mile">マイストーン振り返りOK？（毎月3~5日,19~21日）</label>
+        <select id="mile" name="mile">
+            <option value="" disabled selected>選択してください</option>
+            <option value="option1">〇</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="report">本日の申し送り</label>
+        <textarea id="report" name="report" rows="3"></textarea>
+    </div>
+
     <button type="submit">送信</button>
-</form> 
 
-<a href="{{ url_for('title') }}">
-    <button>トップに戻る</button>
-</a>
+</form>
+
 
 <script src="test.js"></script>    
 </body>
