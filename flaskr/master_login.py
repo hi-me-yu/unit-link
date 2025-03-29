@@ -7,7 +7,7 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ローカル用　セッションキーの設定
-app.config["SECRET_KEY"] = os.urandom(24)
+# app.config["SECRET_KEY"] = os.urandom(24)
 
 #Flask-Loginの「Remember Me（ログイン状態を維持）」機能を制御
 #Flask-Login が「Remember Me」用のクッキーを作成し、セッションが切れても自動ログインできるようになる。通常はブラウザ綴じるとセッション切れる
