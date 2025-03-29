@@ -12,7 +12,7 @@ header nav a {
     color: #999966;  /* 金色 */
     margin-left: 25px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 1.2rem;
     font-weight: bold;
 }
 header nav a:hover {
@@ -20,16 +20,15 @@ header nav a:hover {
 }
 
 header .logo h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
 }
-
 
 
 /* ◎メイン */
 /* 日付のスタイル */
 .main_today{
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: bold;
     color: #666;
     margin-bottom: 10px;
@@ -41,7 +40,7 @@ header .logo h1 {
 お知らせボード
  */
 .main_office_name{
-    font-size: 35px;
+    font-size: 2.5rem;
     text-align: center;
     letter-spacing: 5px;/* 文字と文字の間隔 */
     font-family: "Mochiy Pop One", sans-serif;
@@ -51,7 +50,7 @@ header .logo h1 {
 
 /* メッセージのスタイル */
 .main_milestone{
-    font-size: 40px;
+    font-size: 2.5rem;
     text-align: center;
     color: #d9534f; /* 赤系で目立たせる */
     display: inline-block;
@@ -99,7 +98,7 @@ header .logo h1 {
 上部小項目文字
  */
 .unit-title {
-    font-size: 19px; /* 少し大きく */
+    font-size: 1.2rem; /* 少し大きく */
     font-weight: normal;
     color: #444; /* 目立ちすぎないダークグレー */
     line-height: 1.2; /* 行間を広げて2行に収まりやすく */
@@ -111,7 +110,7 @@ header .logo h1 {
 上部大項目文字
  */
 .unit-content {
-    font-size: 22px; /* 少し大きく */
+    font-size: 1.4rem; /* 少し大きく */
     color: #ff69a3;/* 強調色として温かみのある黄色 */
     flex: 1 1 45%;
     white-space: nowrap; /* 折り返しを無効にする */
@@ -133,7 +132,7 @@ header .logo h1 {
 下部小項目
  */
 .goal-title {
-    font-size: 19px; /* 少し大きく */
+    font-size: 1.4rem; /* 少し大きく */
     font-weight: normal;
     color: #444; /* 目立ちすぎないダークグレー */
     line-height: 1.2; /* 行間を広げて2行に収まりやすく */
@@ -163,7 +162,7 @@ header .logo h1 {
     font-family: "Shippori Mincho B1", serif;
     font-weight: 700;
     font-style: normal;
-    font-size: 22px;
+    font-size: 1.4rem;
     line-height: 1.2;/* 行間の間隔を調整 */
     color: #5d99ff;
 }
@@ -175,6 +174,68 @@ header .logo h1 {
     border: 0;
     height: 1px;
     background: #bbb;
+}
+
+/* ★スマホ用（768px以下） */
+@media screen and (max-width: 768px) {
+    /* ヘッダーのナビゲーションを縦並びに */
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+    header nav a {
+        display: block;
+        margin: 10px 0;
+    }
+
+    /* メインのタイトルサイズを調整 */
+    .main_office_name, .main_milestone {
+        font-size: 2rem; /* 小さめに */
+        letter-spacing: 2px;
+    }
+
+    /* 日付のスタイルを調整 */
+    .main_today {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    /* フッターのコンテンツを縦並びに */
+    .goal-content-wrapper {
+        flex-direction: column;
+        gap: 20px; /* ボックス間の間隔を狭める */
+        align-items: center;
+    }
+
+    .goal-content {
+        width: 80%; /* 幅を調整 */
+        margin: 0 auto; /* 中央配置 */
+        text-align: center;
+    }
+}
+
+/* ★ノートパソコン用（769px〜1024px） */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    /* ヘッダーの余白調整 */
+    header {
+        padding: 15px 20px;
+    }
+
+    /* メインのタイトルサイズを調整 */
+    .main_office_name, .main_milestone {
+        font-size: 2.2rem; /* デスクトップより少し小さく */
+        letter-spacing: 3px;
+    }
+
+    /* フッターのレイアウト調整 */
+    .goal-content-wrapper {
+        gap: 50px; /* ボックス同士の間隔を少し縮める */
+    }
+
+    .goal-content {
+        width: 350px; /* ボックスを少し縮小 */
+    }
 }
 
 
