@@ -12,9 +12,9 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 
 
 #開発モード用
-# json_file_path = "spread-sheet-test.json" 
+json_file_path = "spread-sheet-test.json" 
 #WEBアプリ用
-json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+# json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 
 scopes = ["https://www.googleapis.com/auth/spreadsheets"] #スコープ：どの範囲でまでその権限・影響を及ばせるか 今回のパターンで行くとスプレッドシートの読み書きが行える
 
