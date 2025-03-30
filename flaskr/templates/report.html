@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
     <title>業務報告</title>
 </head>
@@ -46,15 +49,19 @@
         <select id="mile" name="mile">
             <option value="" disabled selected>選択してください</option>
             <option value="option1">〇</option>
+            <option value="option2"> </option>
         </select>
     </div>
 
-    <div class="input-group">
+    <div class="input-group_text">
         <label for="report">本日の申し送り</label>
         <textarea id="report" name="report" rows="3"></textarea>
     </div>
 
-    <button type="submit">送信</button>
+    <div class="input-group_button">
+        <button type="submit">送信</button>
+    </div>
+    
 
 </form>
 

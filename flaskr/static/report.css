@@ -25,62 +25,94 @@ header .logo h1 {
 
 
 .title_office{
-    font-size: 35px;
+    font-size: 45px;
     text-align: center;
     letter-spacing: 5px;/* 文字と文字の間隔 */
+    font-family: "Kaisei Decol", serif;
+    font-weight: 700;
+    font-style: normal;
+    color: #f57c00;
     
 }
 
-/* フォーム全体 */
-.modern-form {
-    max-width: 480px;
-    margin: 40px auto;
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-}
 
-/* ラベル */
+/* フォーム */
+
+/* ◎フォームの設定 */
+/* 売上予測・予算差などの小項目文字 */
 .modern-form label {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: bold;
     color: #333;
     display: block;
-    margin-bottom: 8px;
-    margin-bottom: 10px;
+    margin-top: 30px;
+    font-family: "Mochiy Pop P One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    white-space: nowrap; /* 折り返しを無効にする */
+    
 }
 
-/* Googleフォーム風の入力ボックス */
+/* 売上予測・予算の入力フォーム作成　Googleフォームみたいに下線で*/
 .underline-input {
     position: relative;
     display: flex;
     align-items: center;
     padding-bottom: 8px;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid #1523e4;
     transition: border-color 0.3s ease;
+    
 }
 
+/* 売上予算・予算差入力時のinputタグについて（文字&半角英数字・マイナスの文字について） */
 .underline-input input {
     flex: 1;
-    border: none;
-    font-size: 16px;
+    border: none;/* ボックスにならないように */
+    font-size: 20px;
     padding: 8px 0;
-    outline: none;
-    background: transparent;
+    outline: none;/* フォーカス時の枠線を変える */
+    /* background: transparent; */
+    
 }
 
-/* 入力中の強調 */
+/*◎ 入力中の強調 */
+/* 入力時に下線に色をつける */
 .underline-input input:focus {
     border-bottom: 2px solid #ff8c00;
 }
+/* 入力した文字をセンターに位置させる */
+.modern-form input:not(:placeholder-shown) {
+    text-align: center;
+}
 
+
+/* 各項目の大きさを設定 */
+.input-group{
+    max-width: 300px;
+    margin: 40px auto;
+}
+.input-group_text{
+    max-width: 400px;
+    margin: 40px auto;
+}
+
+.input-group_button{
+    max-width: 400px;
+    margin: 40px auto;
+     display: flex;
+    justify-content: flex-end; /* 右端に寄せる */
+
+}
+
+
+/* ◎各項目についての詳細設定 */
 /* 単位（万円） */
 .unit {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: bold;
-    color: #666;
+    color:#333;
     margin-left: 10px;
+   
 }
 
 /* セレクトボックス */
@@ -89,89 +121,89 @@ header .logo h1 {
     width: 100%;
     padding: 12px;
     border: none;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid #1523e4;
     background: transparent;
     font-size: 16px;
+    text-align-last: center;
+
 }
 
 /* テキストエリア */
 .modern-form textarea {
     width: 100%;
     border: none;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid #1523e4;
     padding: 12px;
     font-size: 16px;
-    background: transparent;
-    resize: vertical;
-    min-height: 80px;
-    margin-bottom: 25px; /* ← 各項目の間隔を大きく */
-    border-bottom: 2px solid #ddd; /* Googleフォーム風の下線 */
+    background: transparent;/* 背景が完全に透明 通常テキストエリアの背景は白色 */
+    resize: vertical;/* textarea のサイズ変更を 縦（垂直方向）だけに制限 */
+    min-height: 80px;/* 入力幅を広く */
+    margin-bottom: 10px; /* ← ボタンとの間隔を大きく */
 }
 
-/* 送信ボタン */
+/* ボタンのスタイル */
 .modern-form button {
-    width: 100%;
-    background: linear-gradient(45deg, #ff8c00, #ff6000);
-    color: white;
-    font-size: 18px;
+    background:#ff9800; /* オレンジ→ゴールドのグラデ */
+    color: #fff; /* 白文字 */
+    font-size: 20px;
     font-weight: bold;
-    padding: 12px;
+    padding: 15px 30px;
     border: none;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.3s ease;
-}
-.styled-form button {
-    margin-top: 30px;
+    transition: all 0.3s ease;
+
 }
 
 /* ホバー時 */
 .modern-form button:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ffb74d, #ffd54f); /* さらに明るいオレンジ系 */
+    transform: scale(1.05);
 }
 
-/* ★スマホ用（768px以下） */
-@media screen and (max-width: 768px) {
-    header {
-        flex-direction: column;
-        text-align: center;
-        padding: 10px;
-    }
-    header nav a {
-        display: block;
-        margin: 5px 0;
-    }
-    .title_office {
-        font-size: 28px;
-    }
-    .modern-form {
-        max-width: 90%;
-        padding: 20px;
-    }
-    .modern-form label, .modern-form select, .modern-form textarea, .underline-input input {
-        font-size: 14px;
-    }
-    .modern-form button {
-        font-size: 16px;
-        padding: 10px;
-    }
+/* クリック時 */
+.modern-form button:active {
+    background: linear-gradient(135deg, #f57c00, #ff9800); /* 濃いめのオレンジ */
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(255, 152, 0, 0.6);
 }
+
 
 /* ★ノートパソコン用（769px〜1024px） */
-@media screen and (min-width: 769px) and (max-width: 1024px) {
+@media screen and (max-width: 1366px) and (max-height: 768px) {
+    /* ヘッダーの余白調整 */
     header {
-        padding: 15px 20px;
+        padding: 0px;
     }
-    .title_office {
-        font-size: 32px;
+    header nav a {
+        margin-left: 16px;
+        font-size: 16px;
     }
-    .modern-form {
-        max-width: 400px;
-        padding: 20px;
+    .title_office{
+        font-size: 30px;
+    }
+    .modern-form label {
+        font-size: 15px;
+    }
+    .underline-input {
+        padding-bottom: 3px;
+    }
+    .underline-input input {
+        font-size: 15px;
+    }
+    .unit {
+        font-size: 12px;
+    }
+    .modern-form textarea {
+        padding: 10px;
+        font-size: 14px;
+        min-height: 70px;/* 入力幅を広く */
+        margin-bottom: 2px; /* ← ボタンとの間隔を大きく */
     }
     .modern-form button {
-        font-size: 17px;
-        padding: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        padding: 10px 25px;
+    
     }
 }
