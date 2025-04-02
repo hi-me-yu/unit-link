@@ -160,9 +160,9 @@ header nav a:hover {
     font-family: "Shippori Mincho B1", serif;
     font-weight: 700;
     font-style: normal;
-    font-size: 22px;
+    font-size: 24px;
     line-height: 1.2;/* 行間の間隔を調整 */
-    color: #5d99ff;
+    color: #0e11ec;
 }
 
 /* 仕切り線のデザイン */

@@ -65,9 +65,22 @@
     </form>
     
 
-    <a href="{{ url_for('logout') }}">
-        <button>ログアウト</button>
-    </a>
+    <h1>タスク管理入力</h1>
+    <form method="post" action="{{ url_for('title') }}" target="_blank">
+        <table border="1">
+            <tr>
+                <th>期限</th>
+                <th>タスク内容</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="deadline"></td>
+                <td><input type="text" name="task"></td>
+            </tr>
+        </table>
+
+
+        <button type="submit">タスク登録</button>
+   </form>
 
     
 </body>

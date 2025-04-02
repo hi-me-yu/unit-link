@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #Flask-Loginの「Remember Me（ログイン状態を維持）」機能を制御
 #Flask-Login が「Remember Me」用のクッキーを作成し、セッションが切れても自動ログインできるようになる。通常はブラウザ綴じるとセッション切れる
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=7)
+app.config['SESSION_COOKIE_SECURE'] = True  # Secure属性を有効にする
 
 # login_managerインスタンス化
 login_manager = LoginManager()
@@ -68,6 +69,7 @@ def login():
         #間違ってる場合はエラーと共にログイン画面医
         if user and check_password_hash(user.pw, pw):
             #login_userはflask_loginモジュールの関数：引数の値にユーザー情報（主キーが入った）を代入。sessionに主キーを保存する
+            session.clear()
             #主キーの情報は再読み込み時に@login_manager.user_loaderが処理する
             login_user(user, remember=True)
             #管理者はまず管理者画面に飛ぶ
@@ -86,20 +88,10 @@ def login():
 #ログアウト機能の実装
 @app.route("/logout")
 def logout():
+    session.clear()
     logout_user()
     return redirect(url_for("index")) 
-      
-#管理者画面　サインアップとDBを表示させる 
-@app.route("/master") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required  #「ログインしているか？」をチェックするデコレーター
-def master():#トップ画面が表示される時に使われる関数  
-    #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
-    # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
-    #all()で全ての情報をリスト化して返す
-    posts = Post.query.order_by(Post.id).all()
-    return render_template(
-       "master.html",posts = posts
-   )
+    
     
 #新規登録をして送信したら情報を受け取る
 @app.route("/register", methods = ["POST"])
@@ -159,25 +151,17 @@ def get_office_name(user_id):
     user = Post.query.get(user_id)
     return user.office_name 
 
-#業務報告をする、見る画面
-@app.route("/title") #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required 
-def title():#トップ画面が表示される時に使われる関数
-    #ログインした事業所名を取得する関数を実施（current_user.idでログインした事業所のid情報を取得して引数に）
-    office_name = get_office_name(current_user.id)
-   
-    special_days = [3, 4, 5, 19, 20, 21, 22, 28]
-    message = ""
-    
-    if today.day in special_days:
-        message = "マイルストーン振り返りの期間です"
-        
-    today_with_week = f"{today_str} {today_week}"
-    
+#管理者画面　サインアップとDBを表示させる 
+@app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
+@login_required  #「ログインしているか？」をチェックするデコレーター
+def master():#トップ画面が表示される時に使われる関数  
+    #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
+    # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
+    #all()で全ての情報をリスト化して返す
+    posts = Post.query.order_by(Post.id).all()
+
     return render_template(
-       "title.html",message = message,today = today_with_week,
-       office_name = office_name
-       
+       "master.html",posts = posts
    )
 
 #業務報告する画面    

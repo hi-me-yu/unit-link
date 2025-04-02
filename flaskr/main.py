@@ -29,8 +29,10 @@ gc = gspread.authorize(credentials)
 
 spreadsheet_id = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
 spreadsheet_url = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
+spreadsheet_url_2 = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=1221591128#gid=1221591128"
 sh = gc.open_by_key(spreadsheet_id)
 ws = sh.get_worksheet(0)
+ws_2 = sh.get_worksheet(1)
 
 #   #クラスメソッドで本日の日付と曜日を取得
 today =date.today()
@@ -122,8 +124,58 @@ def spread():
 def spread_link():
     return redirect(spreadsheet_url)
 
+
+today_2 = datetime.today().strftime("%Y-%m-%d")
+
+#業務報告をする、見る画面
+@app.route("/title", methods=["POST", "GET"])
+@login_required
+def title():
+    # 初期化
+    abi = None  
+    coment = None  
+    office_name = get_office_name(current_user.id)
+    
+    special_days = [3, 4, 5, 19, 20, 21, 22, 28]
+    message = "マイルストーン振り返りの期間です" if today.day in special_days else ""
+    
+    today_with_week = f"{today_str} {today_week}"
+
+    # 今日の日付を取得
+    today_2 = datetime.today().strftime('%Y-%m-%d')
+
+    # 期限とタスクのリストを取得
+    data = ws_2.get_values("B2:C")  
+
+    # 今日のタスクを取得
+    today_tasks = [task_name for deadline, task_name in data if deadline == today_2]
+
+    # **GETでもPOSTでも常に今日のタスクを表示**
+    abi = today_tasks if today_tasks else None
+    coment = None if today_tasks else "本日のタスクはありません"
+
+    if request.method == "POST":
+        # フォームからデータ取得
+        deadline = request.form["deadline"]
+        task_name = request.form["task"]  
+        new_task = [deadline, task_name]
+        ws_2.append_row(new_task)  
+
+        # POST時も再度タスクリストを取得して更新
+        data = ws_2.get_values("B2:C")  
+        today_tasks = [task_name for deadline, task_name in data if deadline == today_2]
+        abi = today_tasks if today_tasks else None
+        coment = None if today_tasks else "本日のタスクはありません"
+
+    return render_template(
+        "title.html",
+        message=message,
+        today=today_with_week,
+        office_name=office_name,
+        abi=abi,
+        coment=coment
+    )
 # if __name__ == "__main__" :
 #     app.run(host="0.0.0.0", port=8090, debug=True)　リモートホスト用
-
 
 

@@ -10,17 +10,16 @@ body {
 }
 
 h1 {
-    font-family: "Hachi Maru Pop", cursive;
-    font-weight: 700;
+    font-family: "Mochiy Pop P One", sans-serif;
+    font-weight: 400;
     font-style: normal;
-    font-size: 50px;/*  #（斜体ではない） */
-    color: #ffffff;  /* 白（背景色が明るいため、白で目立ちやすく元気な印象） */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 影で文字を引き立て */
-    background: linear-gradient(200deg, #ffeb3b, #ff9800); /* 明るいイエローからオレンジのグラデーション */
-    padding: 20px 40px;
-    border-radius: 60px; /* 丸みのあるデザイン */
-    box-shadow: 5px 5px 15px rgba(255, 150, 200, 0.5); /* ふわっとした影 */
+    font-weight: 900; /* さらに力強く */
+    font-size: 80px; /* ちょっと大きめでインパクト */
+    color: #ff7f00; /* 鮮やかなオレンジ */
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); /* 軽い黒いシャドウで立体感を強調 */
+    letter-spacing: 2px; /* ちょっと広めにしてカッコよく */
 }
+
 .input-container {
     background: #fff;
     border-radius: 8px;

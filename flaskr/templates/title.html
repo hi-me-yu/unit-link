@@ -13,10 +13,12 @@
 <body>
     <!--◎ ヘッダー -->
     <header>
+        <a href="{{ url_for('title') }}">
         <img src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
+        </a>
         <nav>
             <a href="{{ url_for('form') }}">業務報告をする</a>
-            <a href="{{ url_for('spread_link') }}">業務報告を見る</a>
+            <a href="{{ url_for('spread_link') }}" target="_blank">業務報告を見る</a>
             <a href="https://chouseisan.com" target="_blank">調整さん</a>
             <a href="#">タスク管理</a>
             <a href="#">ユニットスプレッドシート</a>
@@ -33,7 +35,13 @@
     <h1 class="main_milestone">〇{{message}}（２日、１０日定期）</h1>
     {% else %}
     {% endif %}
-   
+
+    {% if abi %}
+    <h1>{{abi}}</h1>
+    {% else %}
+    <h1>{{coment}}</h1>
+    {% endif %}
+
 
 <!-- ◎フッター -->
     <footer class="unit-footer">
@@ -46,9 +54,9 @@
             <div class="goal-row">
                 <div class="goal-title">2025年度ユニットGOAL</div>
                 <div class="goal-content-wrapper">
-                    <div class="goal-content">【売上】 <br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
-                    <div class="goal-content">【人材育成】<br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
-                    <div class="goal-content">【Ｄ横とのつながり】<br>⓵事業所同士が協力し、自走出来るユニット<br>⓶事業所同士が協力し、自走出来るユニット</div>
+                    <div class="goal-content">【売上】 <br>⓵毎月の売上は予算の101%以上<br>⓶自分で振り返り・リカバリができる</div>
+                    <div class="goal-content">【人材育成】<br>⓵2026年度に向けて人材育成計画が立てれる<br>⓶２番手に人材育成と売上の関係を説明できる</div>
+                    <div class="goal-content">【Ｄ横とのつながり】<br>各項目に対して目標設定を自分たちで行い<br>全事業所が設定された目標を達成できる
                 </div>
             </div>
             </div>
