@@ -24,10 +24,10 @@
              <!-- |int→parts[1]をint（整数）に変換する -ここでいうと04月の0を消して４にする-> -->
              {% set month = parts[1]|int %}
              {% set day = parts[2]|int %}
-            <td><input type="text" value={{month}}月{{day}}日 readonly></td>
+            <td class="deadline"><input type="text" value={{month}}月{{day}}日 readonly></td>
             <td> <div class="td_task_name">{{ task.task_name }}</div></td>
-            <td><a href="{{task.task_url}}" target="_blank">{{task.task_url}}</a></td>
-            <td><input type="text" value="{{ task.select_office }}" readonly></td>
+            <td class="task-url"><a href="{{task.task_url}}" target="_blank">{{task.task_url}}</a></td>
+            <td class="task-office"><input type="text" value="{{ task.select_office }}" readonly></td>
             <td><input type="text" value="{{ task.office }}" readonly></td>
 
         </tr>

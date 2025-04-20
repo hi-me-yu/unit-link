@@ -44,16 +44,29 @@ input[type="text"] {
     font-size: 15px;
 
 }
+.deadline{
+    max-width: 100px;
+}
 .td_task_name{
     white-space: normal; 
     word-wrap: break-word;
     font-weight: bold;
     font-size: 18px;
+    max-width: 500px;
 }
 
 input[type="text"]:focus {
     outline: none;
     background-color: #eef;
+}
+.task-url{
+    max-width: 400px;
+    word-wrap: break-word;       /* 単語の途中でも折り返す */
+    overflow-wrap: break-word;   /* 上と同様。新しめのCSS */
+    white-space: normal;  
+}
+.task-office{
+    max-width: 100px;
 }
 
 a {
@@ -86,13 +99,24 @@ a:hover {
         padding: 0px;
     }
     th{
-        font-size: 1
-        5px;
+        font-size: 15px;
+    }
+    .deadline{
+        max-width: 130px;
     }
     .td_task_name{
         padding: 0px 70px;
+        max-width: 350px;
     }
-
+    .task-url{
+        max-width: 350px;
+        word-wrap: break-word;       /* 単語の途中でも折り返す */
+        overflow-wrap: break-word;   /* 上と同様。新しめのCSS */
+        white-space: normal;  
+    }
+    .task-office{
+        max-width: 130px;
+    }
 
 
 

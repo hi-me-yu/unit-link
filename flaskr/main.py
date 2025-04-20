@@ -14,9 +14,9 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 # スプレッドシートの認証情報関数
 def get_spread_sheets():
         #開発モード用
-    json_file_path = "spread-sheet-test.json" 
+    # json_file_path = "spread-sheet-test.json" 
     #WEBアプリ用
-    # json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+    json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
     
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] #スコープ：どの範囲でまでその権限・影響を及ばせるか 今回のパターンで行くとスプレッドシートの読み書きが行える
     # from_service_account_file関数に引数json_file_path, scopes=scopesを渡すことでクラスメソッドとしてCredentialsクラスに値を渡しインスタンス変数を設定。
@@ -39,9 +39,10 @@ def spread_sheets(ws):
 
 # スプレッドシートのタスク一覧を昇順で並べ替えリクエスト作成関数→管理者画面でタスク登録した際に実行
 def sort_by_task_deadline_desc():
-    json_file_path = "spread-sheet-test.json" 
+    # json_file_path = "spread-sheet-test.json" 
     #WEBアプリ用
-    # json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]   
+    json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]   
+    
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] 
 
     credentials = Credentials.from_service_account_file(json_file_path, scopes=scopes)   
@@ -92,8 +93,7 @@ today_str = datetime.today().strftime("%Y/%m/%d")#isoformatメソッドで今日
 today_week = week[today.weekday()] #weekdayメソッドは取得した日付の曜日を数字として表す
 today_full = f"{today_str} {today_week}"
 
-
-    
+# report.htmlの内容（業務報告入力した内容）をスプレッドシートへ反映    
 @app.route("/spread", methods=["GET", "POST"]) 
 #POST:入力データを送る、GET:ページを開く POSTは送る側・貰う側両方設定必要。（GETは貰う側だけでOK)
 @login_required
@@ -121,8 +121,6 @@ def spread():
             6: {"red": 1.0, "green": 1.0, "blue": 1.0}   # 日曜: 超薄い水色（白に近い）
         }
 
-        
-        
         # 新しい業務報告データ（3行目に挿入する）
         #各列にフォームから取得して下記リストのデータを入れる
         new_data = [
