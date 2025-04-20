@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
     <title>業務報告</title>
 </head>
 <body>
     <header>
         <a href="{{ url_for('title') }}">
-            <img src="{{ url_for('static', filename='image/logo.png') }}" >
+            <img class="logo" src="{{ url_for('static', filename='image/logo.png') }}" >
         </a>
         
         <nav>
             <a href="{{ url_for('spread_link') }}">業務報告を見る</a>
             <a href="https://chouseisan.com" target="_blank">調整さん</a>
-            <a href="#">タスク管理</a>
+            <a href="{{ url_for('task_display')}}">タスク一覧</a>
             <a href="#">ユニットスプレッドシート</a>
             <a href="{{ url_for('title') }}">トップに戻る</a>
             <a href="{{ url_for('logout') }}">ログアウト </a>
@@ -26,11 +26,12 @@
     </header>
     <div>
 
-
+<div class="form-all">
+<p class="main_today" > {{today}} </p>
 <h1 class="title_office">VP{{office_name}} 業務報告</h1>
 
+<div class="input-all">
 <form action="{{ url_for('spread') }}" method="POST"  target="_blank" class="modern-form">
-
     <div class="input-group">
         <label for="revenue">売上予測</label>
         <div class="underline-input">
@@ -64,10 +65,9 @@
     <div class="input-group_button">
         <button type="submit">送信</button>
     </div>
-    
-
 </form>
-
+</div>
+</div>
 
 <script src="test.js"></script>    
 </body>

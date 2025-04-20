@@ -1,0 +1,99 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    font-size: 20px;
+    background-color: #3f51b5;
+    color: white;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+input[type="text"] {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    font-size: 15px;
+
+}
+.td_task_name{
+    white-space: normal; 
+    word-wrap: break-word;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    background-color: #eef;
+}
+
+a {
+    margin-top: 30px;
+    text-decoration: none;
+    color: #3f51b5;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* グリーン */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}
+
+@media screen and (max-width: 1366px) and (max-height: 768px) {
+    body{
+        padding: 0px;
+    }
+    th{
+        font-size: 1
+        5px;
+    }
+    .td_task_name{
+        padding: 0px 70px;
+    }
+
+
+
+
+}

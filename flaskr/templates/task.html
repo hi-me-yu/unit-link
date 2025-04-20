@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='task.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <h2>タスク一覧（当月・次月）</h2>
+    <table border="1">
+        <tr>
+            <th>タスク期限</th>
+            <th>タスク内容</th>
+            <th>URL（あれば）</th>
+            <th>対象事業所</th>
+            <th>タスク完了チェック</th>
+        </tr>
+
+        {% for task  in today_tasks %}
+        <tr>
+             <!-- setは変数を定義　splitは引数の/でここで分けるという意味。例）2025/4/16であれば→2025, 4,16で分けられる -->
+             {% set parts = task.deadline.split('/')%}
+             <!-- |int→parts[1]をint（整数）に変換する -ここでいうと04月の0を消して４にする-> -->
+             {% set month = parts[1]|int %}
+             {% set day = parts[2]|int %}
+            <td><input type="text" value={{month}}月{{day}}日 readonly></td>
+            <td> <div class="td_task_name">{{ task.task_name }}</div></td>
+            <td><a href="{{task.task_url}}" target="_blank">{{task.task_url}}</a></td>
+            <td><input type="text" value="{{ task.select_office }}" readonly></td>
+            <td><input type="text" value="{{ task.office }}" readonly></td>
+
+        </tr>
+        {% endfor%}
+    </table>
+    <a href="{{ url_for('title') }}" class="back-button">トップに戻る</a>
+
+</body>

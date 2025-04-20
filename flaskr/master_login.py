@@ -1,10 +1,11 @@
 from flaskr import app, db
 from flask import render_template, request, redirect, url_for, json, session, make_response,flash
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 from flask_sqlalchemy import SQLAlchemy 
 import psycopg2,os
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+
 
 # ローカル用　セッションキーの設定
 # app.config["SECRET_KEY"] = os.urandom(24)
@@ -91,6 +92,17 @@ def logout():
     session.clear()
     logout_user()
     return redirect(url_for("index")) 
+
+
+# 新規登録したら登録した事業所名がスプレッドシートのヘッダーに反映される関数
+def office_name_header_spreadsheets(office_name):
+    from flaskr.main import spread_sheets
+    ws_2 = spread_sheets(1)
+    current_header = ws_2.get_all_values("B2:Z2")[0]
+    if office_name and office_name not in current_header:
+        current_header.append(office_name)
+        ws_2.update("B2", [current_header])
+        return current_header
     
     
 #新規登録をして送信したら情報を受け取る
@@ -103,6 +115,9 @@ def register():
         # パスワードのハッシュ化（暗号化）
         hashed_pass = generate_password_hash(pw)
         office_name = request.form.get("office_name")
+        # 新規登録したら登録した事業所名がスプレッドシートのヘッダーに反映される
+        if office_name:
+            office_name_header_spreadsheets(office_name)
         #ユーザー名・PW・事業所名が入力出来てない時にエラーを出す
         if not username or not pw or not office_name:
             # flash関数（flaskの組み込み関数）リダイレクト時にメッセージを表示するための関数　メッセージを一時的に保持する
@@ -151,14 +166,41 @@ def get_office_name(user_id):
     user = Post.query.get(user_id)
     return user.office_name 
 
+
 #管理者画面　サインアップとDBを表示させる 
 @app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
 @login_required  #「ログインしているか？」をチェックするデコレーター
-def master():#トップ画面が表示される時に使われる関数  
+def master():#トップ画面が表示される時に使われる関数 
+    from flaskr.main import spread_sheets, sort_by_task_deadline_desc
+    ws_2 = spread_sheets(1)
+    
     #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
     # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
     #all()で全ての情報をリスト化して返す
     posts = Post.query.order_by(Post.id).all()
+    
+    get_sheets_B = ws_2.get_all_values("B2:B")
+    
+    if request.method == "POST":
+        # 完了ボタンを押すことによるtask_okだけのPOSTとタスク入力のPOSTを分けて使い分けるためのif文（全部一緒ではエラー出る
+        if "task_ok" not in request.form:
+            deadline_raw = request.form["deadline"]
+            # replace関数：第１引数の文字列を第２引数の文字列に変換（今回は例：2025-04-20→2025/04/20に変換）
+            deadline = deadline_raw.replace("-", "/")
+            task_name = request.form["task"]
+            task_url = request.form["task_url"]
+            select_office = request.form["select_office"]  # 登録用
+            
+            if not task_url:
+               task_url = ""
+               
+            new_task = [deadline, task_name, task_url, select_office]   
+            # B2列のデータを全て取得してlenで数を数える。+2はB2を外しての数を数えるから入力したいセルは+2個目になる
+            next_row = len(get_sheets_B) + 2  # B2から数えて次の空き行
+            ws_2.update(f"B{next_row}:E{next_row}", [new_task])      
+            
+            sort_by_task_deadline_desc()
+ 
 
     return render_template(
        "master.html",posts = posts
@@ -168,9 +210,16 @@ def master():#トップ画面が表示される時に使われる関数
 @app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
 @login_required 
 def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実行しろってこと→つまりhttp://127.0.0.1:5000/formのブラウザにreport.htmlを表示させるってこと
+    #current_user.idは現在ログインしているユーザーの主キーを取得
     office_name = get_office_name(current_user.id)
     
-    return render_template(
-        "report.html",office_name = office_name
+    from flaskr.main import today_full
+    
+    return render_template("report.html",office_name = office_name,today=today_full
     )
+    
+
+
+
+    
     

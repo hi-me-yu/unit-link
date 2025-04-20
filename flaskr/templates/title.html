@@ -12,55 +12,85 @@
 </head>
 <body>
     <!--◎ ヘッダー -->
-    <header>
-        <a href="{{ url_for('title') }}">
-        <img src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
-        </a>
-        <nav>
-            <a href="{{ url_for('form') }}">業務報告をする</a>
-            <a href="{{ url_for('spread_link') }}" target="_blank">業務報告を見る</a>
-            <a href="https://chouseisan.com" target="_blank">調整さん</a>
-            <a href="#">タスク管理</a>
-            <a href="#">ユニットスプレッドシート</a>
-            <a href="{{ url_for('logout') }}">ログアウト </a>
-        </nav>
-    </header>
-    <div>
-   
-<!-- ◎メイン -->
-    <p class="main_today" > {{today}} </p>
-    <h1 class="main_office_name" >VP{{office_name}} お知らせボード</h1>
+    <div class="wrapper">
+        <header class="unit-header">
+            <a href="{{ url_for('title') }}">
+            <img class="logo" src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
+            </a>
+            <nav>
+                <a href="{{ url_for('form') }}">業務報告をする</a>
+                <a href="{{ url_for('spread_link') }}" target="_blank">業務報告を見る</a>
+                <a href="https://chouseisan.com" target="_blank">調整さん</a>
+                <a href="{{ url_for('task_display')}}">タスク一覧</a>
+                <a href="#">ユニットスプレッドシート</a>
+                <a href="{{ url_for('logout') }}">ログアウト </a>
+            </nav>
+        </header>
+        <div>
+       
+    <!-- ◎メイン -->
+     <div class="main_all">
+     <p>{{done_row}}</p>
+     <div class="unit-main">
+        <p class="main_today" > {{today}} </p>
+        <h1 class="main_office_name" >VP{{office_name}} お知らせボード</h1>
+    
+        {% if message %}
+        <h1 class="main_milestone">〇{{message}}（２日、１０日定期）</h1>
+        {% else %}
+        {% endif %}
+    
+        
+        {% if task %}
+        {% for cell_rw, task_deadline, task_value, url, office in task %}
+        <form method="post" action="{{url_for('title')}}">
+          <h1 class="main_message">
+            <!-- setは変数を定義　splitは引数の/でここで分けるという意味。例）2025/4/16であれば→2025, 4,16で分けられる -->
+            {% set parts = task_deadline.split('/')%}
+            <!-- |int→parts[1]をint（整数）に変換する -ここでいうと04月の0を消して４にする-> -->
+            {% set month = parts[1]|int %}
+            {% set day = parts[2]|int %}
+            <span class="deadline">{{month}}月{{day}}日</span> <span class="task_name">{{task_value}}</span> 
 
-    {% if message %}
-    <h1 class="main_milestone">〇{{message}}（２日、１０日定期）</h1>
-    {% else %}
-    {% endif %}
-
-    {% if abi %}
-    <h1>{{abi}}</h1>
-    {% else %}
-    <h1>{{coment}}</h1>
-    {% endif %}
-
-
-<!-- ◎フッター -->
-    <footer class="unit-footer">
-        <div class="footer-inner">
-            <div class="unit-row">
-                <div class="unit-title">目指すユニット</div>
-                <div class="unit-content">事業所同士が協力し、自走出来るユニット</div>
-            </div>
-            <hr class="footer-line">
-            <div class="goal-row">
-                <div class="goal-title">2025年度ユニットGOAL</div>
-                <div class="goal-content-wrapper">
-                    <div class="goal-content">【売上】 <br>⓵毎月の売上は予算の101%以上<br>⓶自分で振り返り・リカバリができる</div>
-                    <div class="goal-content">【人材育成】<br>⓵2026年度に向けて人材育成計画が立てれる<br>⓶２番手に人材育成と売上の関係を説明できる</div>
-                    <div class="goal-content">【Ｄ横とのつながり】<br>各項目に対して目標設定を自分たちで行い<br>全事業所が設定された目標を達成できる
+            <!-- もしURLがある場合のみ表示させるように -->
+            {% if url %}
+              <!-- スパンタグはインライン要素でインライン要素は横並びになる -->
+             <span class="task_url"> タスクチェック表あり：<a href="{{url}}" target="_blank" class="a-tag">チェック表へ</a></span>
+            {% endif %}
+           <input type="hidden" name="done_task_name" value="{{task_value}}">
+           <input type="hidden" name="done_deadline" value="{{task_deadline}}">
+           <input type="hidden" name="done_office" value="{{office}}">
+           <!-- 各タスク行列の行Noを送り現在のﾀｽｸを特定する -->
+           <button type="submit" name="task_ok" value="{{ cell_rw }}" class="cool-button">完了</button>
+        </h1>
+        </form>   
+       
+          {% endfor%}
+        {% else %}
+        <h1 class="main_message">{{coment}}</h1>
+        {% endif %}
+       
+     </div>
+    </div>
+       
+    
+    
+    <!-- ◎フッター -->
+        <footer class="unit-footer">
+            <div class="footer-inner">
+                <hr class="footer-line">
+                <div class="goal-row">
+                    <div class="goal-title">2025年度ユニットGOAL</div>
+                    <div class="goal-content-wrapper">
+                        <div class="goal-content">【売上】 <br>⓵毎月の売上は予算の101%以上<br>⓶自分で振り返り・リカバリができる</div>
+                        <div class="goal-content">【人材育成】<br>⓵2026年度に向けて人材育成計画が立てれる<br>⓶２番手に人材育成と売上の関係を説明できる</div>
+                        <div class="goal-content">【Ｄ横とのつながり】<br>各項目に対して目標設定を自分たちで行い<br>全事業所が設定された目標を達成できる
+                    </div>
                 </div>
-            </div>
-            </div>
-    </footer>
+                </div>
+        </footer>
+    </div>
+
     <script src="{{ url_for('static', filename='report.js') }}"></script>  
 </body>
 </html>

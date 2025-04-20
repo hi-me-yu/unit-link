@@ -66,15 +66,28 @@
     
 
     <h1>タスク管理入力</h1>
-    <form method="post" action="{{ url_for('title') }}" target="_blank">
+    <form method="post" action="{{ url_for('master') }}">
         <table border="1">
             <tr>
                 <th>期限</th>
                 <th>タスク内容</th>
+                <th>URL</th>
+                <th>事業所選択</th>
             </tr>
             <tr>
-                <td><input type="text" name="deadline"></td>
-                <td><input type="text" name="task"></td>
+                <td><input type="date" name="deadline" required></td>
+                <td><input type="text" name="task" required></td>
+                <td><input type="text" name="task_url"></td>
+                <td>
+                    <!-- プルダウンの作成 -->
+                    <select name="select_office" required>
+                        <option value="">-- 選択してください --</option>
+                        <option value="全事業所">全事業所</option>
+                        <option value="田島">田島</option>
+                        <option value="高殿">高殿</option>
+                        <option value="鶴橋">鶴橋</option>
+                    </select>
+                </td>
             </tr>
         </table>
 
@@ -82,6 +95,6 @@
         <button type="submit">タスク登録</button>
    </form>
 
-    
+   <a href="{{ url_for('logout') }}">ログアウト </a>
 </body>
 </html>

@@ -1,11 +1,19 @@
 /*◎ヘッダー */
 header { 
+    position: fixed; /* ヘッダーを固定 */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* ヘッダーの高さ調整 */
+    z-index: 10; /* メインより前に出てる */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
+    padding: 8px 30px;
     color: white;
     border-bottom: 5px inset #999966;  /* ヘッダー下に金色の線 */
+    background-color: white;/* ホワイトにすることで前面に出てるから白色で消される（つまり透明でない） */
+    
 }
 header nav a {
     color: #999966;  /* 金色 */
@@ -18,20 +26,30 @@ header nav a:hover {
     text-decoration: underline;
 }
 
-header .logo h1 {
-    font-size: 24px;
-    font-weight: bold;
+
+/* ◎メイン */
+/* 事業所名 */
+.form-all{
+    margin-top: 120px;
 }
 
-
+/* 今日の日付 */
+.main_today{
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    margin-top: -15px;
+    margin-bottom: 5px;
+    text-align: end;
+}
 .title_office{
     font-size: 45px;
     text-align: center;
     letter-spacing: 5px;/* 文字と文字の間隔 */
-    font-family: "Kaisei Decol", serif;
-    font-weight: 700;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 600;
     font-style: normal;
-    color: #f57c00;
+    color: black;
     
 }
 
@@ -174,19 +192,40 @@ header .logo h1 {
     /* ヘッダーの余白調整 */
     header {
         padding: 0px;
+        height:60px;
+    }
+    .logo{
+        height: 70%;
+        width: 70%;
+        margin-left: 10px;
     }
     header nav a {
         margin-left: 16px;
         font-size: 16px;
+        margin-right: 3px;
+    }
+    .form-all{
+        margin-top: 70px;
+    }
+    .input-all{
+        margin-top: -20px;
+    }
+    .main_today{
+        margin-top: 20px;
+        font-size: 18px;
+        /* margin-bottom: 2px; */
     }
     .title_office{
         font-size: 30px;
+        margin-top: -25px;
     }
+    
     .modern-form label {
         font-size: 15px;
     }
     .underline-input {
         padding-bottom: 3px;
+        
     }
     .underline-input input {
         font-size: 15px;

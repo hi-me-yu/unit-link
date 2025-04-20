@@ -1,15 +1,36 @@
-/* *{
+/*
+変なスクロールが出た時の確認用
+*{
     outline: 2px solid blue;
 } */
 
+
+/* .wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  } */
+  body {
+    overflow: hidden; /* 全体スクロールを消す */
+    height: 100vh;
+    margin: 0;
+  }
 /*◎ヘッダー */
 header { 
+    position: fixed; /* ヘッダーを固定 */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* ヘッダーの高さ調整 */
+    z-index: 10; /* メインより前に出てる */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
+    padding: 8px 30px;
     color: white;
     border-bottom: 5px inset #999966;  /* ヘッダー下に金色の線 */
+    background-color: white;/* ホワイトにすることで前面に出てるから白色で消される（つまり透明でない） */
+    
 }
 header nav a {
     color: #999966;  /* 金色 */
@@ -24,12 +45,23 @@ header nav a:hover {
 
 
 /* ◎メイン */
+.unit-main{
+    margin-top: 70px;   /* ヘッダーの高さと合わせる */
+    margin-bottom: 100px; /* フッターの高さと合わせる */
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 170px); /* ヘッダーとフッター分を引いた高さ */
+    flex: 1; /* 残りスペースを使って拡張 */
+
+
+}
 /* 日付のスタイル */
 .main_today{
     font-size: 28px;
     font-weight: bold;
     color: #666;
-    margin-bottom: 10px;
+    margin-top: 15px;
+    margin-bottom: 5px;
     text-align: end;
 }
 
@@ -38,33 +70,70 @@ header nav a:hover {
 お知らせボード
  */
 .main_office_name{
-    font-size: 35px;
+    font-size: 30px;
     text-align: center;
     letter-spacing: 5px;/* 文字と文字の間隔 */
     font-family: "Mochiy Pop One", sans-serif;
     font-weight: 400;
     font-style: normal;
+    margin-top: -40px;
+    margin-bottom: 5px;
 }
 
 /* メッセージのスタイル */
 .main_milestone{
-    font-size: 40px;
+    font-size: 35px;
     text-align: center;
     color: #d9534f; /* 赤系で目立たせる */
     display: inline-block;
     font-family: "Mochiy Pop One", sans-serif;
     font-weight: 400;
     font-style: normal;
+    margin-top: 40px;
+    margin-left: 40px;
 }
 
+/* タスクメッセージ */
+.main_message{
+    font-size: 35px;
+    font-family: "Mochiy Pop One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-left: 40px;
+}
+.deadline{
+    font-size: 25px;
+    color: #0e11ec;
+}
+.task_name{
+    margin-left: 20px;
+}
 
+.task_url{
+    margin-left: 10px;
+    font-size: 25px;
+
+}
+h1{
+    line-height: 1.0;
+}
+.a-tag{
+    color: purple; /* 初期色：青とか */
+    transition: color 0.3s ease;
+}
+.a-tag:hover {
+    color: #0056b3; /* ホバー時の色：ちょい濃い青とか */
+  }
 
 /* ◎フッター */
 /* 
 フッター全体
  */
  .unit-footer {
-    position: absolute;
+    position: fixed;/* フッターを固定 */
+    z-index: 10; 
+
+    /* position: absolute; */
     bottom:0;/* フッターの位置を下部の一番下に設定 */
     width: 99%;
     background: #f9f9f9; /* 穏やかな背景色 */
@@ -74,6 +143,7 @@ header nav a:hover {
     justify-content: center;/* 要素を縦方向中央に */
     align-items: center;/* 要素を横方向中央に */
     border-top: 1px solid #ddd;/* フッター上部に線をつける */
+    
   
 }
 
@@ -87,60 +157,27 @@ header nav a:hover {
     flex-direction: column;/* 子要素縦並びにする */
 }
 /* 
-上部各行全体 
-*/
-.unit-row {
-    width: 100%;/* 文字の横幅 */
-}
-
-/* 
-上部小項目文字
- */
-.unit-title {
-    font-size: 19px; /* 少し大きく */
-    font-weight: normal;
-    color: #444; /* 目立ちすぎないダークグレー */
-    line-height: 1.2; /* 行間を広げて2行に収まりやすく */
-    font-family: "Yu Mincho", 游明朝, serif;
-    font-weight: bolder;
-}
-
-/* 
-上部大項目文字
- */
-.unit-content {
-    font-size: 22px; /* 少し大きく */
-    color: #ff69a3;/* 強調色として温かみのある黄色 */
-    flex: 1 1 45%;
-    white-space: nowrap; /* 折り返しを無効にする */
-    font-family: "Shippori Mincho B1", serif;
-    font-weight: 700;
-    font-style: normal;
-    line-height: 1.2;/* 行間の間隔を調整 */
-    
-}
-
-/* 
-下部文字全体
+文字全体
  */
 .goal-row {
     text-align: center; /* タイトルを中央揃え */
 }
 
 /* 
-下部小項目
+小項目
  */
 .goal-title {
-    font-size: 19px; /* 少し大きく */
+    font-size: 20px; /* 少し大きく */
     font-weight: normal;
+    margin-top: -10px;
     color: #444; /* 目立ちすぎないダークグレー */
     font-family: "Yu Mincho", 游明朝, serif;
     font-weight: bolder;
-    line-height: 1.2;/* 行間の間隔を調整 */
+    line-height: 1.6/* 行間の間隔を調整 */
 
 }
 /* 
-下部大項目全体
+大項目全体
  */
 .goal-content-wrapper {
     width: 100%;
@@ -148,31 +185,41 @@ header nav a:hover {
     justify-content: center;  /* ボックスを中央に配置 */
     gap: 100px; /* ボックス同士の間隔 */
     white-space: nowrap; /* 折り返しを無効にする */
-
+   
 }
 /* 
-下部大項目
+大項目個別
  */
 .goal-content {
     width: 400px; /* ボックスの幅を指定 */
     margin-right: 100px;/* 各項目の間隔開ける */
+    margin-top: 10px;
     text-align: left; /* テキストを中央寄せ */
     font-family: "Shippori Mincho B1", serif;
     font-weight: 700;
     font-style: normal;
     font-size: 24px;
-    line-height: 1.2;/* 行間の間隔を調整 */
+    line-height: 1.0;/* 行間の間隔を調整 */
     color: #0e11ec;
 }
 
-/* 仕切り線のデザイン */
-.footer-line {
-    width: 60%;
-    margin: 15px auto;
-    border: 0;
-    height: 1px;
-    background: #bbb;
-}
+.cool-button {
+    background-color: #4a4a4a; /* 濃いグレーでシンプル＆上品 */
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .cool-button:hover {
+    background-color: #2e2e2e; /* さらに濃く */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
 
 /* ★スマホ用（768px以下） */
 @media screen and (max-width: 768px) {
@@ -215,39 +262,80 @@ header nav a:hover {
 
 /* ★ノートパソコン用（769px〜1024px） */
 @media screen and (max-width: 1366px) and (max-height: 768px) {
+    body {
+        overflow: hidden; /* 全体スクロールを消す */
+        height: 100vh;
+        margin: 0;
+      }
     /* ヘッダーの余白調整 */
     header {
         padding: 0px;
+        height:60px;
+    }
+    .logo{
+        height: 70%;
+        width: 70%;
+        margin-left: 10px;
     }
     header nav a {
         margin-left: 16px;
         font-size: 16px;
+        margin-right: 3px;
+    }
+    .main_all{
+        margin-top: -30px;
     }
     .main_today{
+        margin-top: 10px;
         font-size: 18px;
         margin-bottom: 2px;
     }
     
     .main_office_name{
-        font-size: 28px;
+        font-size: 24px;
         letter-spacing: 5px;/* 文字と文字の間隔 */
         margin-bottom: 5px;
-        margin-top: 2px;
+        margin-top: -10px;
     }
     
     /* メッセージのスタイル */
     .main_milestone{
-        font-size: 28px;
-        margin-top: 5px; 
+        font-size: 25px;
+        margin-top: 25px; 
+    }
+    h1{
+        line-height: 0.6;
+    }
+    .deadline{
+        font-size: 18px;
+        color: #0e11ec;
+    }
+    .task_name{
+        margin-left: 20px;
+        font-size: 25px;
     }
     
+    .task_url{
+        margin-left: 10px;
+        font-size: 18px;
+    
+    }
+
+    .cool-button {
+        padding: 8px 18px;
+        font-size: 12px;
+
+      }
+    
     .unit-footer {
-        bottom:10px;/* フッターの位置を下部の一番下に設定 */
+        bottom:5px;/* フッターの位置を下部の一番下に設定 */
         padding: 0px;
+
     }
 
     .unit-title {
         font-size: 16px; /* 少し大きく */
+        margin-top: 3px;
     }
 
     .unit-content {
@@ -284,6 +372,4 @@ header nav a:hover {
         margin: 8px auto;
 
     }
-
-
 }
