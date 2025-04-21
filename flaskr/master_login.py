@@ -36,9 +36,9 @@ def load_user(user_id):
     return Post.query.get(user_id)
 
 # postgreSQLでテーブル作成コード（ターミナルでpython -m flaskr.master_login)
-# with app.app_context():
-#     db.create_all()  # テーブルを作成
-#     print("テーブル作成完了！")
+with app.app_context():
+    db.create_all()  # テーブルを作成
+    print("テーブル作成完了！")
 
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]
@@ -134,7 +134,7 @@ def register():
     
 #ID PWの編集・削除画面
 @app.route("/update", methods=["POST"])
-@login_required
+# @login_required
 def update():
     if request.method == "POST":    
         # 更新・削除ボタン列の主キーを取得
@@ -169,7 +169,7 @@ def get_office_name(user_id):
 
 #管理者画面　サインアップとDBを表示させる 
 @app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required  #「ログインしているか？」をチェックするデコレーター
+# @login_required  #「ログインしているか？」をチェックするデコレーター
 def master():#トップ画面が表示される時に使われる関数 
     from flaskr.main import spread_sheets, sort_by_task_deadline_desc
     ws_2 = spread_sheets(1)
@@ -208,7 +208,7 @@ def master():#トップ画面が表示される時に使われる関数
 
 #業務報告する画面    
 @app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
-@login_required 
+# @login_required 
 def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実行しろってこと→つまりhttp://127.0.0.1:5000/formのブラウザにreport.htmlを表示させるってこと
     #current_user.idは現在ログインしているユーザーの主キーを取得
     office_name = get_office_name(current_user.id)
