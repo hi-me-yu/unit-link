@@ -217,20 +217,22 @@ def title():
                         row_task_name = row[2]
                         # 完了ボタンを押したタスクとスプレッドシートのタスク（期限、タスク名、ログインした事業所名とスプレッドシートの事業省名）が一致したら
                         if row_deadline == done_deadline and row_task_name == done_task_name:
-                            header_row = all_rows[1]
-                            # office_indexに5.6の数字を代入
-                            for office_index in range(5,8):
-                                # もし２行目の5,6列目の中にログイン事業所があれば
-                                if header_row[office_index] == office_name:
+                            headers = ws_2.get_values("B2:Z2")[0]
+                            # office_index = None
+                            for i, header in enumerate(headers):
+                                # ヘッダーの中にログインした事業所名が含まれていたら
+                                if header == office_name:
+                                    # 変数名office_indexにi、つまり要素の列番号を入れる
+                                    office_index = i
                                     # スプレッドシートは１行目はインデックス１始まり。取得したdone_rowは最低値０。〇をつけたい最低行はスプレッドシートで３
                                     cell_row = done_row + 3 
                                     # office_index(5,12)の中からこの時点でoffice_indexの値は一つに絞り込まれている。
                                     # 後はスプレッドシートの数値＋１にする
-                                    cell_col = office_index + 1 
+                                    cell_col = office_index + 2
                                     # update_cellメソッド→（行番号,列番号,表示したいもの）
                                     ws_2.update_cell(cell_row, cell_col, "〇")
                             break
-                        
+
                 # スプレッドシートのデータを再取得し、完了したタスクを除外
                 # [0]はget_valuesは返り値が２次元リスト[['タスク名', '期限', 'URL'],['タスク名', '期限', 'URL']]みたいな形で返ってくるから
                 headers = ws_2.get_values("B2:Z2")[0]
@@ -243,6 +245,8 @@ def title():
                         break
 
                 data = ws_2.get_values("B2:Z")
+                 # 今日から３日前の日付取得
+                three_days_ago = today + timedelta(days=3)
                 today_tasks = []
                 for idx, row in enumerate(data[1:]):
                     deadline = row[0]
@@ -255,22 +259,29 @@ def title():
                     # ""としてoffice_indexの列を取得できる
                     is_done = row[office_index] if len(row) > office_index else ""
                     # タスク期限の日付をdatatime型 例：（datetime(2025, 4, 13, 10, 0, 0)からdateがたに変更
-                    deadline_date = datetime.strptime(deadline, "%Y/%m/%d").date()
+                    if deadline and deadline.strip():
+                        try:
+                            deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d").date()
+                        except ValueError:
+                            # 日付の形式が正しくない場合はNoneに設定
+                            deadline_date = None
+                    else:
+                        deadline_date = None
+                        
+                    # deadline_dateがNoneでない場合にのみ、比較処理を行う
+                    if deadline_date:
+                        # 表示条件
+                        is_today_ago = today <= deadline_date <= three_days_ago
+                        is_target_office = office == "全事業所" or office == office_name
+                        is_not_done = is_done != "〇"
 
-                    # 表示条件
-                     # timedelta→何日前かを取得するメソッド（このままでdate型 例:（2025, 4, 13))
-                    three_days_ago = today + timedelta(days=3)
-                    # deadline_dateがthree_days_agoとtodayの間にあるか
-                    is_today_ago =  today <= deadline_date <= three_days_ago
-                    is_target_office = office == "全事業所" or office == office_name
-                    # is_done!の!はでなかったらの否定形
-                    is_not_done = is_done != "〇"
-                    
-                    # 期限、ログイン事業所名、事業所カラムに〇がついてなければその行の情報をtoday_tasksに追加
-                    # ※逆を言うと事業所カラムに〇がついてたらその行はtoday_tasksに追加せず表示させない
-                    if is_today_ago and is_target_office and is_not_done:
-                        cell_rw = idx
-                        today_tasks.append((cell_rw, deadline, task_name, task_url, office))
+                        if is_today_ago and is_target_office and is_not_done:
+                            cell_rw = idx
+                            today_tasks.append((cell_rw, deadline, task_name, task_url, office))
+                    else:
+                        # deadlineがNoneのときはスキップ（または他の処理があればそれを行う）
+                        continue
+
                 # 表示セット
                 if today_tasks:
                     task = today_tasks
@@ -302,43 +313,56 @@ def title():
     data = ws_2.get_values("B2:Z")
     # データ入れる様の変数を定義
     today_tasks = []
-    # 今日から３日前の日付取得
-    three_days_ago = today + timedelta(days=3)
-
-    #●表示用ロジック（ログインしてる事業所に応じて表示切り替え）
-    # 取得した行（列の場合もあり）を要素のインデックスと各行ずつidx,rowにリスト化
-    # enumerate関数→要素のインデックスを取得
-    for idx, row in enumerate(data[1:]):
-        deadline = row[0]
-        task_name  = row[1] 
-        # もし取得したデータが３つより大きい場合はtask_urlにURLを入れる、それ以外は空白で。
-        # ["日付", "タスク名", "事業所"]でURLなしでタスク登録された場合、事業所がrow[2]になるの防ぐ
-        task_url = row[2] if len(row) > 3 else ""
-        office = row[3]
-        is_done = row[office_index] if len(row) > office_index else ""
-        
-        # deadlineをdatetime型→date型に変更
-        deadline_date = datetime.strptime(deadline, "%Y/%m/%d").date()
-        
-        # 表示条件
-        # deadline_dateがthree_days_agoとtodayの間にあるか
-        is_today_ago = today <= deadline_date <= three_days_ago
-        is_target_office = office == "全事業所" or office == office_name
-        # is_done!の!はでなかったらの否定形
-        is_not_done = is_done != "〇"
-        # 全事業所向けのタスク各事業所向けのタスクか判別コード（office == office_nameで今ログインしている事業所名と入力された事業所名が一致したら）
-        # 期限と今日の日付が一致かつ事業所名に全事業所もしくは各事業所名が入力されたら｛タスク名とURLを空のリスト｝をtoday_taskに追加
-        if is_today_ago and is_target_office and is_not_done:
-            cell_rw = idx 
-            today_tasks.append((cell_rw, deadline, task_name, task_url, office))
-
-    # 表示セット
-    if today_tasks:
-        task = today_tasks
-        coment = None
-    else:
+    
+    if len(data) < 2:
         task = None
         coment = "本日のタスクはありません"
+    else:
+        # 今日から３日前の日付取得
+        three_days_ago = today + timedelta(days=3)
+        #●表示用ロジック（ログインしてる事業所に応じて表示切り替え）
+        # 取得した行（列の場合もあり）を要素のインデックスと各行ずつidx,rowにリスト化
+        # enumerate関数→要素のインデックスを取得
+        for idx, row in enumerate(data[1:]):
+            deadline = row[0]
+            task_name  = row[1] 
+            # もし取得したデータが３つより大きい場合はtask_urlにURLを入れる、それ以外は空白で。
+            # ["日付", "タスク名", "事業所"]でURLなしでタスク登録された場合、事業所がrow[2]になるの防ぐ
+            task_url = row[2] if len(row) > 3 else ""
+            office = row[3]
+            is_done = row[office_index] if len(row) > office_index else ""
+            
+            # 日付の入力の確認（前後の空白除いてdatetime、date化する）strip関数：前後の空白を取り除く関数
+            if deadline and deadline.strip():
+                try:
+                    deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d").date()
+                except ValueError:
+                    # 日付の形式が正しくない場合、空だった場合はNoneに設定
+                    deadline_date = None
+            else:
+                deadline_date = None
+
+            # deadline_dateがNoneでない場合にのみ、比較処理を行う
+            if deadline_date:
+                # 表示条件
+                is_today_ago = today <= deadline_date <= three_days_ago
+                is_target_office = office == "全事業所" or office == office_name
+                is_not_done = is_done != "〇"
+
+                if is_today_ago and is_target_office and is_not_done:
+                    cell_rw = idx
+                    today_tasks.append((cell_rw, deadline, task_name, task_url, office))
+            else:
+                # deadlineがNoneのときはスキップ（または他の処理があればそれを行う）
+                continue
+
+        # 表示セット
+        if today_tasks:
+            task = today_tasks
+            coment = None
+        else:
+            task = None
+            coment = "本日のタスクはありません"
           
     return render_template(
         "title.html",
@@ -368,12 +392,20 @@ def task_display() :
     for idx, row in enumerate(data[1:]):#スプレッドシートの２行目からリストに入れる
         deadline = row[0]
         #strptime(文字列、書式)←第１引数と第２引数が一致したらdatetime型 datetime(2025, 4, 13, 0, 0)を文字列から変更するdatetimeはクラス
-        deadline_date = datetime.strptime(deadline, "%Y/%m/%d")
-        # 例）本日が2025/4/13 2025/4/13←これがdeadline_dateで.monthでこの中の月←４
-        if deadline_date.month in [today_month, today_month % 12 + 1]: #%12 + 1は13月にならないように
-            deadline = row[0]
+        if deadline and deadline.strip():
+                try:
+                    deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d")
+                    # 例）本日が2025/4/13 2025/4/13←これがdeadline_dateで.monthでこの中の月←４
+                    if deadline_date.month in [today_month, today_month % 12 + 1]: #%12 + 1は13月にならないように
+                        deadline = row[0]
+                    else:
+                        continue
+                except ValueError:
+                    # 日付の形式が正しくない場合はNoneに設定
+                    deadline_date = None
         else:
-            continue
+            deadline_date = None
+        
         task_name  = row[1] 
         # もし取得したデータが３つより大きい場合はtask_urlにURLを入れる、それ以外は空白で。
         # ["日付", "タスク名", "事業所"]でURLなしでタスク登録された場合、事業所がrow[2]になるの防ぐ
@@ -402,3 +434,5 @@ def task_display() :
 # if __name__ == "__main__" :
 #     app.run(host="0.0.0.0", port=8090, debug=True)　リモートホスト用
 
+
+ 
