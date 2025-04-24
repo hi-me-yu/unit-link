@@ -440,7 +440,7 @@ def task_display() :
     
 #管理者画面　サインアップとDBを表示させる 
 @app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required  #「ログインしているか？」をチェックするデコレーター
+# @login_required  #「ログインしているか？」をチェックするデコレーター
 def master():#トップ画面が表示される時に使われる関数 
     from flaskr.master_login import Post 
     ws_2 = spread_sheets(1)
