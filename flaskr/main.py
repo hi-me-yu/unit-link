@@ -12,40 +12,49 @@ from flask_login import UserMixin, LoginManager, login_user, login_required, log
 # app = Flask(__name__)リモートホスト用
 
 # スプレッドシートの認証情報関数
-def get_spread_sheets():
-        #開発モード用
-    # json_file_path = "spread-sheet-test.json" 
-    #WEBアプリ用
-    json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+#〇開発モード用
+# unit_5 = "spread-sheet-test.json"  
+# unit_4 = "unit-link.json"
+#WEBアプリ用
+unit_5 = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+unit_4 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_UNIT_4"]
+
+# スプレッドシートIDID
+spreadsheet_id_5 = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
+spreadsheet_id_4 = "1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds"
+
+
+def get_spread_sheets(json, spreadsheet_id):
     
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] #スコープ：どの範囲でまでその権限・影響を及ばせるか 今回のパターンで行くとスプレッドシートの読み書きが行える
     # from_service_account_file関数に引数json_file_path, scopes=scopesを渡すことでクラスメソッドとしてCredentialsクラスに値を渡しインスタンス変数を設定。
     # グーグルアカウントの認証管理をするクラスメソッド
-    credentials = Credentials.from_service_account_file(json_file_path, scopes=scopes)
+    credentials = Credentials.from_service_account_file(json, scopes=scopes)
     
     # authorizeはgspreadモジュールの関数。「この認証情報を使って、スプレッドシートを操作する許可をください！」というリクエストを送る
     # gspreadモジュールはスプレッドシートのセルやシートを簡単に操作したい時に使う（例：入力とか読み取りとか色変えるとか）
     # 認証されたらClientを返し、gspread.Clientオブジェクトとしてスプレッドシートの操作オブジェクトとなる
     gc = gspread.authorize(credentials)
-    spreadsheet_id = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
     sh = gc.open_by_key(spreadsheet_id)
     return sh
 
 # スプレッドシートのシートを取得するための関数
 def spread_sheets(ws):
-    sh = get_spread_sheets()
+    sh = get_spread_sheets(unit_5,spreadsheet_id_5)
+    ws_sheets = sh.get_worksheet(ws)
+    return ws_sheets
+
+def spread_sheets_4(ws):
+    sh = get_spread_sheets(unit_4,spreadsheet_id_4)
     ws_sheets = sh.get_worksheet(ws)
     return ws_sheets
 
 # スプレッドシートのタスク一覧を昇順で並べ替えリクエスト作成関数→管理者画面でタスク登録した際に実行
-def sort_by_task_deadline_desc():
-    # json_file_path = "spread-sheet-test.json" 
-    #WEBアプリ用
-    json_file_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]   
+def sort_by_task_deadline_desc(json, spreadsheet_id): 
     
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] 
 
-    credentials = Credentials.from_service_account_file(json_file_path, scopes=scopes)   
+    credentials = Credentials.from_service_account_file(json, scopes=scopes)   
     gc = gspread.authorize(credentials)
     spreadsheet_id = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
     sh = gc.open_by_key(spreadsheet_id)
@@ -86,6 +95,7 @@ def sort_by_task_deadline_desc():
 spreadsheet_url = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
 spreadsheet_url_2 = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=1221591128#gid=1221591128"
 
+spreadsheet_url_4_1 = "https://docs.google.com/spreadsheets/d/1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds/edit?gid=0#gid=0"
 #   #クラスメソッドで本日の日付と曜日を取得
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]
@@ -373,10 +383,6 @@ def title():
         coment=coment
     )
     
-# スプレッドシートへ飛ぶ    
-@app.route("/spread_link")
-def spread_link():
-    return redirect(spreadsheet_url)
 
 # task.htmlにタスクを表示
 @app.route("/task_display")
@@ -431,6 +437,58 @@ def task_display() :
     
     return render_template("task.html", today_tasks = today_tasks)
     
+    
+#管理者画面　サインアップとDBを表示させる 
+@app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
+@login_required  #「ログインしているか？」をチェックするデコレーター
+def master():#トップ画面が表示される時に使われる関数 
+    from flaskr.master_login import Post 
+    ws_2 = spread_sheets(1)
+    
+    #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
+    # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
+    #all()で全ての情報をリスト化して返す
+    posts = Post.query.order_by(Post.id).all()
+    
+    get_sheets_B = ws_2.get_all_values("B2:B")
+    
+    if request.method == "POST":
+        # 完了ボタンを押すことによるtask_okだけのPOSTとタスク入力のPOSTを分けて使い分けるためのif文（全部一緒ではエラー出る
+        if "task_ok" not in request.form:
+            deadline_raw = request.form["deadline"]
+            # replace関数：第１引数の文字列を第２引数の文字列に変換（今回は例：2025-04-20→2025/04/20に変換）
+            deadline = deadline_raw.replace("-", "/")
+            task_name = request.form["task"]
+            task_url = request.form["task_url"]
+            select_office = request.form["select_office"]  # 登録用
+            
+            if not task_url:
+               task_url = ""
+               
+            new_task = [deadline, task_name, task_url, select_office]   
+            # B2列のデータを全て取得してlenで数を数える。+2はB2を外しての数を数えるから入力したいセルは+2個目になる
+            next_row = len(get_sheets_B) + 2  # B2から数えて次の空き行
+            ws_2.update(f"B{next_row}:E{next_row}", [new_task])      
+            
+            sort_by_task_deadline_desc(unit_5, spreadsheet_id_5)
+ 
+
+    return render_template(
+       "master.html",posts = posts
+   )
+    
+    # スプレッドシートへ飛ぶ    
+@app.route("/spread_link")
+def spread_link():
+    return redirect(spreadsheet_url)
+@app.route("/spread_link_4")
+def spread_link_4():
+    ws = spread_sheets_4(0)
+    ws.update_acell("A5", "出来た")
+   
+
+    return redirect(spreadsheet_url_4_1)
+
 # if __name__ == "__main__" :
 #     app.run(host="0.0.0.0", port=8090, debug=True)　リモートホスト用
 

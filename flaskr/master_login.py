@@ -22,7 +22,7 @@ login_manager.init_app(app)
 # postgreSQlのDB作成に当たってのクラス作成（SQLAlchemy用） 
 class Post(UserMixin,db.Model): #flask_loginモジュールのUserMixinクラスの継承：クラスの内容→⓵is_authenticated	ユーザーが認証済みかどうかを判定 (True or False)
     #⓶is_active	アカウントが有効かどうか (True or False)⓷is_anonymous 匿名ユーザーかどうか (False にする)④get_id()	ユーザーの識別IDを取得（セッション管理で使う）
-    __tablename__ = 'office'  # 必要ならテーブル名を明示的に指定
+    __tablename__ = 'unit_link'  # 必要ならテーブル名を明示的に指定
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(10), nullable=False)
     pw = db.Column(db.String(200), nullable=False)
@@ -36,9 +36,9 @@ def load_user(user_id):
     return Post.query.get(user_id)
 
 # postgreSQLでテーブル作成コード（ターミナルでpython -m flaskr.master_login)
-# with app.app_context():
-#     db.create_all()  # テーブルを作成
-#     print("テーブル作成完了！")
+with app.app_context():
+    db.create_all()  # テーブルを作成
+    print("テーブル作成完了！")
 
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]
@@ -167,44 +167,7 @@ def get_office_name(user_id):
     return user.office_name 
 
 
-#管理者画面　サインアップとDBを表示させる 
-@app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
-@login_required  #「ログインしているか？」をチェックするデコレーター
-def master():#トップ画面が表示される時に使われる関数 
-    from flaskr.main import spread_sheets, sort_by_task_deadline_desc
-    ws_2 = spread_sheets(1)
-    
-    #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
-    # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
-    #all()で全ての情報をリスト化して返す
-    posts = Post.query.order_by(Post.id).all()
-    
-    get_sheets_B = ws_2.get_all_values("B2:B")
-    
-    if request.method == "POST":
-        # 完了ボタンを押すことによるtask_okだけのPOSTとタスク入力のPOSTを分けて使い分けるためのif文（全部一緒ではエラー出る
-        if "task_ok" not in request.form:
-            deadline_raw = request.form["deadline"]
-            # replace関数：第１引数の文字列を第２引数の文字列に変換（今回は例：2025-04-20→2025/04/20に変換）
-            deadline = deadline_raw.replace("-", "/")
-            task_name = request.form["task"]
-            task_url = request.form["task_url"]
-            select_office = request.form["select_office"]  # 登録用
-            
-            if not task_url:
-               task_url = ""
-               
-            new_task = [deadline, task_name, task_url, select_office]   
-            # B2列のデータを全て取得してlenで数を数える。+2はB2を外しての数を数えるから入力したいセルは+2個目になる
-            next_row = len(get_sheets_B) + 2  # B2から数えて次の空き行
-            ws_2.update(f"B{next_row}:E{next_row}", [new_task])      
-            
-            sort_by_task_deadline_desc()
- 
 
-    return render_template(
-       "master.html",posts = posts
-   )
 
 #業務報告する画面    
 @app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
