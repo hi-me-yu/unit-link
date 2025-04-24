@@ -484,7 +484,7 @@ def spread_link():
 @app.route("/spread_link_4")
 def spread_link_4():
     ws = spread_sheets_4(0)
-    ws.update_acell("A5", "出来た")
+    ws.update_acell("A6", "デプロイ")
    
 
     return redirect(spreadsheet_url_4_1)

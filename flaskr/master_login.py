@@ -134,7 +134,7 @@ def register():
     
 #ID PWの編集・削除画面
 @app.route("/update", methods=["POST"])
-@login_required
+# @login_required
 def update():
     if request.method == "POST":    
         # 更新・削除ボタン列の主キーを取得
@@ -171,7 +171,7 @@ def get_office_name(user_id):
 
 #業務報告する画面    
 @app.route("/form")  #<a href="{{ url_for('form') }}">このコードによってhttp://127.0.0.1:5000/formにアクセス白ってこと
-@login_required 
+# @login_required 
 def form():#http://127.0.0.1:5000/formにアクセスしたらform関数を実行しろってこと→つまりhttp://127.0.0.1:5000/formのブラウザにreport.htmlを表示させるってこと
     #current_user.idは現在ログインしているユーザーの主キーを取得
     office_name = get_office_name(current_user.id)
