@@ -1,63 +1,65 @@
 # from flask import Flask リモートホスト用※from flaskr import appは消す
 from flaskr import app
-from flask import render_template, request, redirect, url_for, json #HTMLのデータを読み込んでPythonのデータに埋め込んで表示させる ※jinja2を使ってる
+from flask import render_template, request, redirect, url_for, json, session #HTMLのデータを読み込んでPythonのデータに埋め込んで表示させる ※jinja2を使ってる
 import gspread  #gspreadモジュールをインポート
 import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build #gooleapiclientライブラリ→Googleの色んなAPI（スプレとかドライブとかGmaiｌとか）を使うためのツール
 from datetime import date, datetime, timedelta
-from flaskr.master_login import get_office_name
+from flaskr.master_login import get_user_date
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from flask_session import Session
 
 # app = Flask(__name__)リモートホスト用
 
-# スプレッドシートの認証情報関数
-#〇開発モード用
-# unit_5 = "spread-sheet-test.json"  
-# unit_4 = "unit-link.json"
-#WEBアプリ用
-unit_5 = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-unit_4 = os.environ["GOOGLE_APPLICATION_CREDENTIALS_UNIT_4"]
-
-# スプレッドシートIDID
-spreadsheet_id_5 = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
-spreadsheet_id_4 = "1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds"
-
-
-def get_spread_sheets(json, spreadsheet_id):
-    
+# スプレッドシートのシートを取得するための関数
+def get_worksheet(unit_name,sheet_index):
+    #〇開発モード用
+    unit_map = {
+        "第4ユニット": {"unit_json": "unit-link.json" , "sheet_id": "1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds"},
+        "第5ユニット": {"unit_json": "spread-sheet-test.json" , "sheet_id": "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"}
+    }
+    #WEBアプリ用
+    # unit_map = {
+    #     "第4ユニット": {"unit_json": os.environ["GOOGLE_APPLICATION_CREDENTIALS_UNIT_4"] , "sheet_id": "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"},
+    #     "第5ユニット": {"unit_json": os.environ["GOOGLE_APPLICATION_CREDENTIALS"] , "sheet_id": "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"}
+    # }
+        
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] #スコープ：どの範囲でまでその権限・影響を及ばせるか 今回のパターンで行くとスプレッドシートの読み書きが行える
     # from_service_account_file関数に引数json_file_path, scopes=scopesを渡すことでクラスメソッドとしてCredentialsクラスに値を渡しインスタンス変数を設定。
     # グーグルアカウントの認証管理をするクラスメソッド
-    credentials = Credentials.from_service_account_file(json, scopes=scopes)
+    config = unit_map[unit_name]
+    
+    credentials = Credentials.from_service_account_file(config["unit_json"], scopes=scopes)
     
     # authorizeはgspreadモジュールの関数。「この認証情報を使って、スプレッドシートを操作する許可をください！」というリクエストを送る
     # gspreadモジュールはスプレッドシートのセルやシートを簡単に操作したい時に使う（例：入力とか読み取りとか色変えるとか）
     # 認証されたらClientを返し、gspread.Clientオブジェクトとしてスプレッドシートの操作オブジェクトとなる
     gc = gspread.authorize(credentials)
-    sh = gc.open_by_key(spreadsheet_id)
-    return sh
+    sh = gc.open_by_key(config["sheet_id"])
+    ws = sh.get_worksheet(sheet_index)
 
-# スプレッドシートのシートを取得するための関数
-def spread_sheets(ws):
-    sh = get_spread_sheets(unit_5,spreadsheet_id_5)
-    ws_sheets = sh.get_worksheet(ws)
-    return ws_sheets
-
-def spread_sheets_4(ws):
-    sh = get_spread_sheets(unit_4,spreadsheet_id_4)
-    ws_sheets = sh.get_worksheet(ws)
-    return ws_sheets
+    return ws
+    
 
 # スプレッドシートのタスク一覧を昇順で並べ替えリクエスト作成関数→管理者画面でタスク登録した際に実行
-def sort_by_task_deadline_desc(json, spreadsheet_id): 
+def sort_by_task_deadline_desc(unit_name): 
+    unit_map = {
+        "第4ユニット": {"unit_json": "unit-link.json" , "sheet_id": "1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds"},
+        "第5ユニット": {"unit_json": "spread-sheet-test.json" , "sheet_id": "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"}
+    }
+    #WEBアプリ用
+    # unit_map = {
+    #     "第4ユニット": {"unit_json": os.environ["GOOGLE_APPLICATION_CREDENTIALS_UNIT_4"] , "sheet_id": "1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds"},
+    #     "第5ユニット": {"unit_json": os.environ["GOOGLE_APPLICATION_CREDENTIALS"] , "sheet_id": "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"}
+    # }
     
     scopes = ["https://www.googleapis.com/auth/spreadsheets"] 
+    config = unit_map[unit_name]
 
-    credentials = Credentials.from_service_account_file(json, scopes=scopes)   
+    credentials = Credentials.from_service_account_file(config["unit_json"], scopes=scopes)   
     gc = gspread.authorize(credentials)
-    spreadsheet_id = "1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w"
-    sh = gc.open_by_key(spreadsheet_id)
+    sh = gc.open_by_key(config["sheet_id"])
     ws_2 = sh.get_worksheet(1)
     sheet_id = ws_2.id  # 並べ替え対象のシートID
     
@@ -87,15 +89,16 @@ def sort_by_task_deadline_desc(json, spreadsheet_id):
     # build(serviceName:使いたいサービス（例：スプレ、ドライブ、メール）, version：APIのバージョン, credentials=None：認証)
     service = build("sheets", "v4", credentials=credentials)
     service.spreadsheets().batchUpdate(
-        spreadsheetId=spreadsheet_id,
+        spreadsheetId=config["sheet_id"],
         body=sort_request
     ).execute()
     
     
-spreadsheet_url = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
-spreadsheet_url_2 = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=1221591128#gid=1221591128"
+spreadsheet_url_5_1 = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=0#gid=0"
+spreadsheet_url_5_2 = "https://docs.google.com/spreadsheets/d/1kSXfl_g3WwopEyGIIvswYzNFwotVqh_g1DPNI31gb_w/edit?gid=1221591128#gid=1221591128"
 
 spreadsheet_url_4_1 = "https://docs.google.com/spreadsheets/d/1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds/edit?gid=0#gid=0"
+spreadsheet_url_4_2 = "https://docs.google.com/spreadsheets/d/1DQBOs1TzvLz1r8DnomCTUCyAzACvml4cc9aHlyTB3ds/edit?gid=0#gid=0"
 #   #クラスメソッドで本日の日付と曜日を取得
 today =date.today()
 week = ["（月）", "（火）", "（水）", "（木）", "（金）", "（土）", "（日）"]
@@ -108,7 +111,9 @@ today_full = f"{today_str} {today_week}"
 #POST:入力データを送る、GET:ページを開く POSTは送る側・貰う側両方設定必要。（GETは貰う側だけでOK)
 @login_required
 def spread():
-    ws = spread_sheets(0)
+    
+    unit_name = get_user_date(current_user.id).unit_name
+    ws = get_worksheet(unit_name, 0)
     
     if request.method == "POST":
         # フォームのデータを取得
@@ -118,7 +123,7 @@ def spread():
         mile_data = request.form["mile"]  
         
         #事業所名をDBから取得
-        office_name = get_office_name(current_user.id)
+        office_name = get_user_date(current_user.id).office_name
         
         #曜日ごとの色の設定
         weekday_colors =  {
@@ -179,49 +184,211 @@ def spread():
             ws.update_acell(f"F3","")
         
          # 送信後スプレッドシートへ飛ぶ HTMLファイルに飛ばしたいときはrender_template、URLに飛ばしたかったらredirect
-        return redirect(spreadsheet_url)
+        return redirect(spreadsheet_url_4_1)
 
     return render_template(
         "report.html") #GETに対応。spread関数を実行するときにreport.htmlを開く
-    
 
+# 【関数】スケジュールのスプレッドシートからデータを取得する関数   
+def get_schedule(unit_name, index):
+    ws_sheet = get_worksheet(unit_name, index)
+    date_3 = ws_sheet.get_all_values("B2:J")
+    today = date.today() 
+    today_day = today.day
+    schedule_1 =[]
+    schedule_2 =[]
+    
+    for idx, row in enumerate(date_3[1:]):
+        row_1 = row[:4]
+        day = row_1[0]
+        schedule = row_1[1] if len(row_1) > 1 else ""
+        schedule_display_day = row_1[2] if len(row_1) > 2 else ""
+        schedule_url = row_1[3] if len(row_1) > 3 else ""
+        
+        row_2 = row[5:]
+        day_2 = row_2[0]
+        schedule_data_2 = row_2[1] if len(row_2) > 1 else ""
+        schedule_display_day_2 = row_2[2] if len(row_2) > 2 else ""
+        schedule_url_2 = row_2[3] if len(row_2) > 3 else ""
+        
+        # スプレッドシートの日付の部分を実際のdate型に置き換える
+        try:
+            schedule_day = date(today.year, today.month, int(day))
+        except ValueError:
+            continue  # 日付変換できなければスキップ
+        try:
+            schedule_day_2 = date(today.year, today.month, int(day_2))
+        except ValueError:
+            continue  # 日付変換できなければスキップ
+        
+        # スプレッドシートの表示開始日を数値に置き換える    
+        if schedule_display_day == "1日前":
+            ago = 1
+        elif schedule_display_day == "3日前":
+            ago = 3
+        else:
+            ago = 7
+            
+        if schedule_display_day_2 == "1日前":
+            ago_2 = 1
+        elif schedule_display_day_2 == "3日前":
+            ago_2 = 3
+        else:
+            ago_2 = 7
+        
+        # スケジュール日から表示開始日を引いて何日前から表示させるかを確定        
+        days_ago = schedule_day - timedelta(days = ago)
+        days_ago_2 = schedule_day_2 - timedelta(days = ago_2)
+                
+        # 表示開始日がスプレッドシートに入ってるかの判定（if schedule_display_day is Noneでは空欄を判定しない）
+        if not schedule_display_day:
+            is_display = int(day) == today_day
+        else:
+            is_display = schedule_day >= today >= days_ago
+            
+        if not schedule_display_day_2:
+            is_display_2 = int(day_2) == today_day
+        else:
+            is_display_2 = schedule_day_2 >= today >= days_ago_2
+        
+        # スケジュールが入っててかつ表示開始日がある（表示開始日は空欄でもＯＫ）
+        if schedule and is_display:
+                schedule_1.append({
+                    "cell_rw": idx,
+                    "day": day,
+                    "schedule": schedule,
+                    "schedule_url": schedule_url})
+
+        if schedule_data_2 and is_display_2:
+                schedule_2.append({
+                    "cell_rw": idx,
+                    "day": day_2,
+                    "schedule": schedule_data_2,
+                    "schedule_url": schedule_url_2})
+        
+    return schedule_1, schedule_2
+
+# 【関数】タスクのスプレッドシートからデータを取得する関数   
+def get_task(unit_name, index, office_name):
+    ws_2 = get_worksheet(unit_name, index)
+  # ●タスク表示用のデータ取得
+    headers = ws_2.get_values("B2:Z2")[0]
+    office_index = None
+    for i, header in enumerate(headers):
+        # ヘッダーの中にログインした事業所名が含まれていたら
+        if header == office_name:
+            # 変数名office_indexにi、つまり要素の列番号を入れる
+            office_index = i
+            break
+    # スプレッドシートのB2列を起点にE列までの全てを取得
+    data = ws_2.get_values("B2:Z")
+
+    # データ入れる様の変数を定義
+    today_tasks = []
+
+    if len(data) < 2:
+        task = None
+        coment = "本日のタスクはありません"
+    else:
+        #●表示用ロジック（ログインしてる事業所に応じて表示切り替え）
+        # 取得した行（列の場合もあり）を要素のインデックスと各行ずつidx,rowにリスト化
+        # enumerate関数→要素のインデックスを取得
+        for idx, row in enumerate(data[1:]):
+            deadline = row[0]
+            try:
+                if deadline and deadline.strip():
+                    deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d").date()
+                    deadline_display = deadline.strip()  # すでに"YYYY/MM/DD"なのでそのまま
+                else:
+                    deadline_display = ""
+            except ValueError:
+                deadline_display = ""
+            task_name  = row[1] 
+            # もし取得したデータが３つより大きい場合はtask_urlにURLを入れる、それ以外は空白で。
+            # ["日付", "タスク名", "事業所"]でURLなしでタスク登録された場合、事業所がrow[2]になるの防ぐ
+            task_url = row[2] if len(row) > 3 else ""
+            office = row[3]
+            task_display_day = row[4]
+            is_done = row[office_index] if len(row) > office_index else ""
+            try:
+                task_display_dayago = datetime.strptime(task_display_day.strip(), "%Y/%m/%d").date() if task_display_day and task_display_day.strip() else None
+            except ValueError:
+                task_display_dayago = None
+                
+            # deadline_dateがNoneでない場合にのみ、比較処理を行う
+            if task_display_dayago:
+                # 表示条件
+                is_display_start = (task_display_dayago is None) or (today >= task_display_dayago)
+                is_target_office = office == "全事業所" or office == office_name
+                is_not_done = is_done != "〇"
+
+                if is_display_start and is_target_office and is_not_done:
+                    cell_rw = idx
+                    today_tasks.append((cell_rw, deadline_display, task_name, task_url, office))
+            else:
+                # deadlineがNoneのときはスキップ（または他の処理があればそれを行う）
+                continue
+    return today_tasks
+            
+            
 #業務報告をする、見る画面（title.hmtlにタスクを表示させたいからrender_template関数使って
 # 　　　　　　　　　　　　　　　　　　　　　　　　表示させるためタスク実装のコードをここに記載）
 @app.route("/title", methods=["POST", "GET"])
 @login_required
 def title():
-    # spread_sheets(1)
-    ws_2 = spread_sheets(1)
+    # ユニットによってHTMLの表示内容を変更する（Pythonでユニット名を取得してHTMLでif文使って反映）
+    unit_name = get_user_date(current_user.id).unit_name
+    unit_name_type_1 = None  # 初期化
+    unit_name_type_2 = None 
+    if unit_name == "第4ユニット":
+        unit_name_type_1 = unit_name
+    else:
+        unit_name_type_2 = unit_name
+   
+    # master_login.pyからget_user_date関数（ログインした事業所のidを取得する関数）をインポート利用
+    office_name = get_user_date(current_user.id).office_name
     
-    # 今日の日付を引数の形で取得
-    today = date.today() 
-    today_2 = datetime.today().strftime("%Y/%m/%d")
+    # ◎GET表示用
+    # ◎get_schedule関数からスケジュールメッセージ表示のデータ取得
+    schedule_1, schedule_2 = get_schedule(unit_name, 2)
+    # ◎get_schedule関数からスケジュールメッセージ表示のデータ取得        
+    # today_tasks = get_task(unit_name, 1, office_name)
+    tasks = session.get("today_tasks", [])
     
-    # master_login.pyからget_office_name関数（ログインした事業所の事業所名を取得する関数）をインポート利用
-    office_name = get_office_name(current_user.id)
     
-    # ◎指定日にちでマイルストーン振り返りメッセージの表示
-    special_days = [3, 4, 5, 6, 19, 20, 21, 22, 28]
-    message = "マイルストーン振り返りの期間です" if today.day in special_days else ""
+      # 表示セット   
+    if schedule_1 or schedule_2:
+        schedule = schedule_1
+        schedule2 = schedule_2
+        coments = None
+    else:
+        schedule = None
+        schedule2 = None
+        coments = "本日のスケジュールはありません"
+      
+    if tasks:
+        task = tasks
+        coment = None
+    else:
+        task = None
+        coment = "本日のタスクはありません"
     
+    # ◎POST表示用    
     # ◎タスクの表示とタスクボタン関連について
-    #POSTの場合にその情報を取得してスプレッドシートに反映
     if request.method == "POST":
         # ◎タスクボタンを押したときに各事業所のスプレッドシートに〇が付く    
         # else:    
-            done_row = request.form.get("task_ok")
-
-            
+            done_row = request.form.get("task_ok")            
             # もし完了ボタンが押されたら
             if done_row:
                 done_row = int(done_row)  
-                
                 # 表示されたタスクの情報を取得
                 done_task_name = request.form.get("done_task_name")
                 done_deadline = request.form.get("done_deadline")
                 # スプレッドシートの行を全て取得（行単位で）
+                ws_2 = get_worksheet(unit_name, 1)
                 all_rows = ws_2.get_all_values()
-                              
+                            
                 for row in all_rows:
                         row_deadline =row[1]
                         row_task_name = row[2]
@@ -242,57 +409,22 @@ def title():
                                     # update_cellメソッド→（行番号,列番号,表示したいもの）
                                     ws_2.update_cell(cell_row, cell_col, "〇")
                             break
-
-                # スプレッドシートのデータを再取得し、完了したタスクを除外
-                # [0]はget_valuesは返り値が２次元リスト[['タスク名', '期限', 'URL'],['タスク名', '期限', 'URL']]みたいな形で返ってくるから
-                headers = ws_2.get_values("B2:Z2")[0]
-                # office_index = None
-                for i, header in enumerate(headers):
-                    # ヘッダーの中にログインした事業所名が含まれていたら
-                    if header == office_name:
-                        # 変数名office_indexにi、つまり要素の列番号を入れる
-                        office_index = i
-                        break
-
-                data = ws_2.get_values("B2:Z")
-                 # 今日から３日前の日付取得
-                three_days_ago = today + timedelta(days=3)
-                today_tasks = []
-                for idx, row in enumerate(data[1:]):
-                    deadline = row[0]
-                    task_name = row[1]
-                    task_url = row[2] if len(row) > 3 else ""
-                    office = row[3]
-                    # 例えば、row = ['4/12', '書類提出', '', '全事業所', '〇'これ以降〇なし]の時→len(5)ってこと。
-                    # 最後の〇以降はデータは取得できない。でも例えばoffice_index=6の時にlen(5)までしかないからデータがないのにrowで取得しようとしてしまいエラー出るのを防ぐ
-                    # ここでは〇は関係なく、例えばrow = ['4/12', '書類提出', '', 'A事業所', '', "〇"]で、ログインしているのがoffice_index = 4 だとしてもrow=5に〇がついてるから
-                    # ""としてoffice_indexの列を取得できる
-                    is_done = row[office_index] if len(row) > office_index else ""
-                    # タスク期限の日付をdatatime型 例：（datetime(2025, 4, 13, 10, 0, 0)からdateがたに変更
-                    if deadline and deadline.strip():
-                        try:
-                            deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d").date()
-                        except ValueError:
-                            # 日付の形式が正しくない場合はNoneに設定
-                            deadline_date = None
-                    else:
-                        deadline_date = None
                         
-                    # deadline_dateがNoneでない場合にのみ、比較処理を行う
-                    if deadline_date:
-                        # 表示条件
-                        is_today_ago = today <= deadline_date <= three_days_ago
-                        is_target_office = office == "全事業所" or office == office_name
-                        is_not_done = is_done != "〇"
-
-                        if is_today_ago and is_target_office and is_not_done:
-                            cell_rw = idx
-                            today_tasks.append((cell_rw, deadline, task_name, task_url, office))
-                    else:
-                        # deadlineがNoneのときはスキップ（または他の処理があればそれを行う）
-                        continue
-
+                # ◎get_schedule関数からスケジュールメッセージ表示のデータ取得        
+                today_tasks = get_task(unit_name, 1, office_name)
+                # ◎get_schedule関数からスケジュールメッセージ表示のデータ取得
+                schedule_1, schedule_2 = get_schedule(unit_name, 2)
+         
                 # 表示セット
+                if schedule_1 or schedule_2:
+                    schedule = schedule_1
+                    schedule2 = schedule_2
+                    coments = None
+                else:
+                    schedule = None
+                    schedule2 = None
+                    coments = "本日のスケジュールはありません"
+                    
                 if today_tasks:
                     task = today_tasks
                     coment = None
@@ -302,94 +434,38 @@ def title():
 
                 return render_template(
                     "title.html",
-                    message=message,
                     today=today_full,
                     office_name=office_name,
                     task=task,
                     coment=coment,
-                    done_row = done_row
-                )  
+                    coments = coments,
+                    done_row = done_row,
+                    unit_name_type_1 = unit_name_type_1,
+                    unit_name_type_2=unit_name_type_2,
+                    schedule = schedule,
+                    schedule2 = schedule2)  
                 
-     # ●表示用のデータ取得
-    headers = ws_2.get_values("B2:Z2")[0]
-    office_index = None
-    for i, header in enumerate(headers):
-        # ヘッダーの中にログインした事業所名が含まれていたら
-        if header == office_name:
-            # 変数名office_indexにi、つまり要素の列番号を入れる
-            office_index = i
-            break
-    # スプレッドシートのB2列を起点にE列までの全てを取得
-    data = ws_2.get_values("B2:Z")
-    # データ入れる様の変数を定義
-    today_tasks = []
-    
-    if len(data) < 2:
-        task = None
-        coment = "本日のタスクはありません"
-    else:
-        # 今日から３日前の日付取得
-        three_days_ago = today + timedelta(days=3)
-        #●表示用ロジック（ログインしてる事業所に応じて表示切り替え）
-        # 取得した行（列の場合もあり）を要素のインデックスと各行ずつidx,rowにリスト化
-        # enumerate関数→要素のインデックスを取得
-        for idx, row in enumerate(data[1:]):
-            deadline = row[0]
-            task_name  = row[1] 
-            # もし取得したデータが３つより大きい場合はtask_urlにURLを入れる、それ以外は空白で。
-            # ["日付", "タスク名", "事業所"]でURLなしでタスク登録された場合、事業所がrow[2]になるの防ぐ
-            task_url = row[2] if len(row) > 3 else ""
-            office = row[3]
-            is_done = row[office_index] if len(row) > office_index else ""
-            
-            # 日付の入力の確認（前後の空白除いてdatetime、date化する）strip関数：前後の空白を取り除く関数
-            if deadline and deadline.strip():
-                try:
-                    deadline_date = datetime.strptime(deadline.strip(), "%Y/%m/%d").date()
-                except ValueError:
-                    # 日付の形式が正しくない場合、空だった場合はNoneに設定
-                    deadline_date = None
-            else:
-                deadline_date = None
-
-            # deadline_dateがNoneでない場合にのみ、比較処理を行う
-            if deadline_date:
-                # 表示条件
-                is_today_ago = today <= deadline_date <= three_days_ago
-                is_target_office = office == "全事業所" or office == office_name
-                is_not_done = is_done != "〇"
-
-                if is_today_ago and is_target_office and is_not_done:
-                    cell_rw = idx
-                    today_tasks.append((cell_rw, deadline, task_name, task_url, office))
-            else:
-                # deadlineがNoneのときはスキップ（または他の処理があればそれを行う）
-                continue
-
-        # 表示セット
-        if today_tasks:
-            task = today_tasks
-            coment = None
-        else:
-            task = None
-            coment = "本日のタスクはありません"
-          
     return render_template(
         "title.html",
-        message=message,
         today=today_full,
         office_name=office_name,
         task=task,
-        coment=coment
-    )
-    
-
+        coment=coment,
+        coments=coments,
+        unit_name_type_1 = unit_name_type_1,
+        unit_name_type_2=unit_name_type_2,
+        schedule = schedule,
+        schedule2 = schedule2
+    )            
+                
+   
 # task.htmlにタスクを表示
 @app.route("/task_display")
 def task_display() :
-    ws_2 = spread_sheets(1)
+    unit_name = get_user_date(current_user.id).unit_name
+    ws_2 = get_worksheet(unit_name, 1)
     
-    office_name = get_office_name(current_user.id)
+    office_name = get_user_date(current_user.id).office_name
     today_month = date.today().month# 今日の月を取得
     data = ws_2.get_values("B2:Z")
     date_header = data[0]# スプレッドシートのヘッダー（１行目）を取得
@@ -434,23 +510,31 @@ def task_display() :
             "select_office": select_office,
             "office": office
         })
-    
+
     return render_template("task.html", today_tasks = today_tasks)
-    
-    
+       
 #管理者画面　サインアップとDBを表示させる 
 @app.route("/master", methods = ["GET", "POST"]) #app.routeはエンドポイントを含めたブラウザを表示させると同時に直後の関数も実行する。関数でＨＴＭＬが設定されているとブラウザ上にＨＴＭＬが表示される
 @login_required  #「ログインしているか？」をチェックするデコレーター
 def master():#トップ画面が表示される時に使われる関数 
     from flaskr.master_login import Post 
-    ws_2 = spread_sheets(1)
+    unit_name = get_user_date(current_user.id).unit_name
+    unit_name_type_1 = None  # 初期化
+    unit_name_type_2 = None 
+    if unit_name == "第4ユニット":
+        unit_name_type_1 = unit_name
+    else:
+        unit_name_type_2 = unit_name
+        
+    ws_2 = get_worksheet(unit_name, 1)
     
     #Post.queryでクラスメソッドによるオブジェクト化（PostのDBに対して取得・操作・更新などの指示、命令をするメソッド）
     # Post テーブルのデータを id の昇順で並べて、すべて取得する(order_byメソッド)
+    # filter_by(unit_name = unit_name)→テーブルにフィルターをかける（テーブルのカラム名 =　Pythonの変数）
     #all()で全ての情報をリスト化して返す
-    posts = Post.query.order_by(Post.id).all()
+    posts = Post.query.filter_by(unit_name = unit_name).order_by(Post.id).all()
     
-    get_sheets_B = ws_2.get_all_values("B2:B")
+    get_sheets_B = ws_2.get("B2:B")
     
     if request.method == "POST":
         # 完了ボタンを押すことによるtask_okだけのPOSTとタスク入力のPOSTを分けて使い分けるためのif文（全部一緒ではエラー出る
@@ -461,33 +545,31 @@ def master():#トップ画面が表示される時に使われる関数
             task_name = request.form["task"]
             task_url = request.form["task_url"]
             select_office = request.form["select_office"]  # 登録用
-            
+            task_display = request.form["task_display_day"]
+            task_display_day = task_display.replace("-", "/")
+                        
             if not task_url:
                task_url = ""
                
-            new_task = [deadline, task_name, task_url, select_office]   
+            new_task = [deadline, task_name, task_url, select_office, task_display_day]   
             # B2列のデータを全て取得してlenで数を数える。+2はB2を外しての数を数えるから入力したいセルは+2個目になる
             next_row = len(get_sheets_B) + 2  # B2から数えて次の空き行
-            ws_2.update(f"B{next_row}:E{next_row}", [new_task])      
+            ws_2.update(f"B{next_row}:F{next_row}", [new_task])      
             
-            sort_by_task_deadline_desc(unit_5, spreadsheet_id_5)
+            sort_by_task_deadline_desc(unit_name)
  
-
     return render_template(
-       "master.html",posts = posts
+       "master.html",posts = posts, unit_name_type_1  = unit_name_type_1,
+       unit_name_type_2 = unit_name_type_2
    )
     
     # スプレッドシートへ飛ぶ    
 @app.route("/spread_link")
 def spread_link():
-    return redirect(spreadsheet_url)
+    return redirect(spreadsheet_url_5_2)
 @app.route("/spread_link_4")
 def spread_link_4():
-    ws = spread_sheets_4(0)
-    ws.update_acell("B4", "マジでうざい")
-   
-
-    return redirect(spreadsheet_url_4_1)
+    return redirect(spreadsheet_url_4_2)
 
 # if __name__ == "__main__" :
 #     app.run(host="0.0.0.0", port=8090, debug=True)　リモートホスト用

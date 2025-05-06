@@ -18,8 +18,10 @@
             <img class="logo" src="{{url_for('static', filename = 'image/logo.png')}}" alt="ロゴ画像">
             </a>
             <nav>
+                {% if unit_name_type_1 %}
                 <a href="{{ url_for('form') }}">業務報告をする</a>
-                <a href="{{ url_for('spread_link') }}" target="_blank">業務報告を見る</a>
+                <a href="{{ url_for('spread_link_4') }}" target="_blank">業務報告を見る</a>
+                {% endif %}
                 <a href="https://chouseisan.com" target="_blank">調整さん</a>
                 <a href="{{ url_for('task_display')}}">タスク一覧</a>
                 <a href="{{ url_for('spread_link_4')}}">ユニットスプレッドシート</a>
@@ -35,12 +37,19 @@
         <p class="main_today" > {{today}} </p>
         <h1 class="main_office_name" >VP{{office_name}} お知らせボード</h1>
     
-        {% if message %}
-        <h1 class="main_milestone">〇{{message}}（２日、１０日定期）</h1>
-        {% else %}
+        <h1>スケジュール一覧</h1>
+        {% if schedule or schedule2 %}
+          {% for schedules in schedule  %}
+          <h1>{{schedules.schedule}}</h1>
+           {% endfor%}
+          {% for schedules2 in schedule2  %}
+          <h1>{{schedules2.schedule}}</h1>
+           {% endfor%}
+         {% else %}
+          <h1>{{coments}}</h1> 
         {% endif %}
     
-        
+        <h1>タスク一覧</h1>
         {% if task %}
         {% for cell_rw, task_deadline, task_value, url, office in task %}
         <form method="post" action="{{url_for('title')}}">
@@ -72,8 +81,6 @@
        
      </div>
     </div>
-       
-    
     
     <!-- ◎フッター -->
         <footer class="unit-footer">

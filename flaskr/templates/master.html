@@ -14,11 +14,24 @@
             <th>ユーザー名</th>
             <th>パスワード</th>
             <th>事業所名</th>
+            <th>ユニット名</th>
         </tr>
         <tr>
             <td><input type="text" name="username"></td>
             <td><input type="text" name="pw"></td>
             <td><input type="text" name="office_name"></td>
+            <td> <select name="unit_name" required>
+                <option value="">-- 選択してください --</option>
+                <option value="第1ユニット">第1ユニット</option>
+                <option value="第2ユニット">第2ユニット</option>
+                <option value="第3ユニット">第3ユニット</option>
+                <option value="第4ユニット">第4ユニット</option>
+                <option value="第5ユニット">第5ユニット</option>
+                <option value="第6ユニット">第6ユニット</option>
+                <option value="第7ユニット">第7ユニット</option>
+                <option value="第8ユニット">第8ユニット</option>
+            </select></td>
+           
         </tr>
     </table>
     <br>
@@ -40,24 +53,26 @@
     <form method="post" action="{{ url_for('update') }}">
         <table border="1">
             <tr>
-                <th>ID(主キー)</th>
                 <th>ユーザー名</th>
                 <th>事業所名</th>
+                <th>ユニット名</th>
                 
             </tr>
             {% for log in posts %}
             <tr>
+                
+                <td> <input type="text" name="username_{{ log.id }}" value="{{ log.username }}"></td>
+                <td><input type="text" name="office_name_{{ log.id }}" value="{{ log.office_name }}"></td>
+                <td><input type="text" name="unit_name{{ log.id }}" value="{{ log.unit_name }}"></td>
+                <td><button type="submit" name="update" value="{{ log.id }}">更新</button></td>
+                <td><button type="submit" name="delete" value="{{ log.id }}">削除</button></td>
                 <td>
                     <!-- inputのvalueは表示されるしデータとしても送られる。buttonのvalueは表示はされないけどデータとして送られる。
                     inputもbuttonもそのデータの名前としてnameがある（※nameはデータの値ではない） -->
                     <!-- hidden:ユーザーには表示されないけどデータとしては送信される -->
                     <!-- name:データを送る時の名前（データの情報そのものではない）value:送る情報※inputのvalueとbuttonのvalueは異なる。input→表示＆データ　button→表示なしのデータ -->
-                <input type="text" name="id_{{log.id}}" value="{{ log.id }}" readonly>
+                <input type="hidden" name="id_{{log.id}}" value="{{ log.id }}" readonly>
                 </td>
-                <td> <input type="text" name="username_{{ log.id }}" value="{{ log.username }}"></td>
-                <td><input type="text" name="office_name_{{ log.id }}" value="{{ log.office_name }}"></td>
-                <td><button type="submit" name="update" value="{{ log.id }}">更新</button></td>
-                <td><button type="submit" name="delete" value="{{ log.id }}">削除</button></td>
                 
             </tr>
             {% endfor %}
@@ -73,11 +88,13 @@
                 <th>タスク内容</th>
                 <th>URL</th>
                 <th>事業所選択</th>
+                <th>タスク表示開始日程</th>
             </tr>
             <tr>
                 <td><input type="date" name="deadline" required></td>
                 <td><input type="text" name="task" required></td>
                 <td><input type="text" name="task_url"></td>
+                {% if unit_name_type_1 %}
                 <td>
                     <!-- プルダウンの作成 -->
                     <select name="select_office" required>
@@ -85,18 +102,43 @@
                         <option value="全事業所">全事業所</option>
                         <option value="田島">田島</option>
                         <option value="高殿">高殿</option>
-                        <option value="鶴橋">鶴橋</option>
-                        <option value="鶴橋">八尾</option>
-                        <option value="鶴橋">稲葉</option>
-                        <option value="鶴橋">高井田</option>
+                        <option value="鶴見">鶴見</option>
+                        <option value="天神橋">天神橋</option>
+                        <option value="瓢箪山">瓢箪山</option>
+                        <option value="南木の本">南木の本</option>
+                        <option value="四条畷">四条畷</option>
                     </select>
                 </td>
+                {% elif unit_name_type_2 %}
+                <td>
+                    <!-- プルダウンの作成 -->
+                    <select name="select_office" required>
+                        <option value="">-- 選択してください --</option>
+                        <option value="全事業所">全事業所</option>
+                        <option value="八尾">八尾</option>
+                        <option value="プラス">プラス</option>
+                        <option value="立花">立花</option>
+                        <option value="御陵通">御陵通</option>
+                        <option value="稲葉">稲葉</option>
+                        <option value="高井田">高井田</option>
+                        <option value="交野">交野</option>
+                    </select>
+                </td>
+                {% endif%}
+                <td><input type="date" name="task_display_day" required></td>
             </tr>
         </table>
 
 
         <button type="submit">タスク登録</button>
    </form>
+
+   {% if unit_name_type_1 %}
+   <a href="{{ url_for('spread_link_4') }}">タスク一覧をみる（第4ユニット）</a>
+   {% elif unit_name_type_2 %}
+   <a href="{{ url_for('spread_link') }}">タスク一覧をみる（第5ユニット）</a>
+   {% endif %}
+   
 
    <a href="{{ url_for('logout') }}">ログアウト </a>
 </body>
